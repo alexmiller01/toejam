@@ -806,7 +806,7 @@
         let gameLoopId;
         let speed = 1;
         let lastSpawnTime = 0;
-        let baseSpawnInterval = 2500; // More spaced out - spawn every 2.5 seconds
+        let baseSpawnInterval = 1800; // More furniture - spawn every 1.8 seconds
         let baseSpeed = 6; // Starting slower, will speed up gradually
         
         // DOM elements
@@ -1199,11 +1199,10 @@
             
             const baseSize = sizes[typeKey] || { w: 100, h: 100 };
             
-            // Random scale variation (0.6x to 1.4x)
-            const scale = 0.6 + Math.random() * 0.8;
+            // Uniform size - no random scaling
             const size = {
-                w: Math.round(baseSize.w * scale),
-                h: Math.round(baseSize.h * scale)
+                w: baseSize.w,
+                h: baseSize.h
             };
             
             elem.style.width = size.w + 'px';
@@ -1238,8 +1237,8 @@
             const wobbleSpeed = 0.02 + Math.random() * 0.04;
             const wobbleOffset = Math.random() * Math.PI * 2;
             
-            // Random spin while moving
-            const spinSpeed = Math.random() > 0.7 ? (Math.random() - 0.5) * 3 : 0;
+            // No spin - furniture stays at initial rotation
+            const spinSpeed = 0;
             
             furniture.push({
                 elem: elem,
@@ -1270,32 +1269,12 @@
             
             updateFootPosition();
             
-            // Spawn furniture with randomized timing
-            const baseInterval = baseSpawnInterval / speed;
-            // Add random jitter to spawn timing (0.5x to 1.5x base interval)
-            const spawnInterval = baseInterval * (0.5 + Math.random());
+            // Spawn furniture with consistent timing
+            const spawnInterval = baseSpawnInterval / speed;
             
             if (timestamp - lastSpawnTime > spawnInterval) {
                 spawnFurniture();
                 lastSpawnTime = timestamp;
-                
-                // Occasionally spawn a burst of furniture
-                if (Math.random() < 0.15) {
-                    // Spawn 1-2 extra with staggered timing
-                    const extraCount = 1 + Math.floor(Math.random() * 2);
-                    for (let i = 0; i < extraCount; i++) {
-                        setTimeout(() => {
-                            if (gameRunning) spawnFurniture();
-                        }, (i + 1) * (150 + Math.random() * 300));
-                    }
-                }
-                
-                // Occasionally spawn extra at very high speeds
-                if (speed > 2 && Math.random() < 0.3) {
-                    setTimeout(() => {
-                        if (gameRunning) spawnFurniture();
-                    }, spawnInterval * (0.2 + Math.random() * 0.3));
-                }
             }
             
             // Update furniture
@@ -1344,8 +1323,8 @@
                 }
             }
             
-            // Increase speed faster
-            speed = 1 + (score / 70); // Faster speed increase
+            // Increase speed, capped at 2.5x
+            speed = Math.min(2.5, 1 + (score / 70));
             speedIndicator.textContent = `SPEED ${speed.toFixed(1)}x`;
             
             // Update floor animation speed
