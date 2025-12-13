@@ -1229,8 +1229,8 @@
             
             gameContainer.appendChild(elem);
             
-            // Random speed variation for unpredictability (wider range)
-            const speedVariation = 0.5 + Math.random() * 1.0;
+            // Random speed variation (0.5x to 1.2x - fastest slowed by 20%)
+            const speedVariation = 0.5 + Math.random() * 0.7;
             
             // Random vertical wobble parameters
             const wobbleAmount = Math.random() > 0.6 ? (10 + Math.random() * 30) : 0;
@@ -1269,8 +1269,9 @@
             
             updateFootPosition();
             
-            // Spawn furniture with consistent timing
-            const spawnInterval = baseSpawnInterval / speed;
+            // Spawn furniture with randomized timing (0.6x to 1.4x base interval)
+            const baseInterval = baseSpawnInterval / speed;
+            const spawnInterval = baseInterval * (0.6 + Math.random() * 0.8);
             
             if (timestamp - lastSpawnTime > spawnInterval) {
                 spawnFurniture();
