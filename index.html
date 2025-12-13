@@ -216,6 +216,22 @@
             background: linear-gradient(180deg, #87CEEB 0%, #b8e6b8 100%);
         }
         
+        #bg-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 1.5s ease-in-out;
+            z-index: 1;
+        }
+        
+        #bg-overlay.visible {
+            opacity: 1;
+        }
+        
         /* Floor */
         #floor {
             position: absolute;
@@ -765,6 +781,21 @@
             display: none !important;
         }
         
+        /* No high score image */
+        #no-highscore-img {
+            position: fixed;
+            bottom: -500px;
+            left: 0;
+            width: 300px;
+            z-index: 3500;
+            transition: bottom 0.8s ease-out;
+            pointer-events: none;
+        }
+        
+        #no-highscore-img.show {
+            bottom: 0;
+        }
+        
         /* Screen shake */
         @keyframes screenShake {
             0%, 100% { transform: translate(0, 0); }
@@ -831,13 +862,14 @@
             
             <div id="browser-content">
                 <div id="game-container">
+        <div id="bg-overlay"></div>
         <div id="ceiling"></div>
         <div id="floor"></div>
         <div id="floor-pattern"></div>
         
         <div id="score">0</div>
         <div id="speed-indicator">SPEED 1.0x</div>
-        <div id="bull-charges"><span class="bull-icon">🐂</span> x <span id="charges-count">3</span></div>
+        <div id="bull-charges"><span class="bull-icon">🐂</span> x <span id="charges-count">∞</span></div>
         
         <div id="charging-bull">🐂</div>
         
@@ -865,7 +897,7 @@
         <p class="instructions">
             Furniture is FLYING at your foot!<br>
             <span>↑ ↓</span> or <span>W S</span> to dodge!<br>
-            <span>SPACE</span> = 🐂 Bull charge! (3x)<br>
+            <span>SPACE</span> = 🐂 Bull charge!<br>
             Don't stub your toe... 💀
         </p>
         <button id="start-btn">RUN!</button>
@@ -892,7 +924,14 @@
         <source src="proud-fart-288263.mp3" type="audio/mpeg">
     </audio>
     
+    <!-- No high score sound -->
+    <audio id="no-highscore-audio" preload="auto">
+        <source src="seinfeld.wav" type="audio/wav">
+    </audio>
+    
     <div id="game-over-screen">
+        <!-- No high score image -->
+        <img id="no-highscore-img" src="jerry.png" alt="">
         <div id="explosion-container">
             <div id="explosion-title-bar">
                 <div class="window-btn btn-close"></div>
@@ -902,18 +941,12 @@
             <div id="game-over-content">
                 <div class="fart-icon" id="fart-btn" title="Click for fart!">💨</div>
                 <h2>GAME OVER</h2>
-                <p style="font-family: VT323; font-size: 20px; color: #666;">A furniture has caused an unexpected collision.</p>
-                <div id="final-score">SCORE: 0</div>
-                
-                <!-- Initials input (shows only for new high score) -->
-                <div id="initials-form">
-                    <h3>🏆 NEW HIGH SCORE!</h3>
-                    <input type="text" id="initials-input" maxlength="5" placeholder="ABCDE" autocomplete="off">
-                    <button id="submit-initials-btn">SUBMIT</button>
-                </div>
-                
-                <!-- High Scores Display -->
-                <div id="high-scores">
+                <!-- Score and Leaderboard Row -->
+                <div id="score-leaderboard-row">
+                    <div id="final-score">SCORE: 0</div>
+                    
+                    <!-- High Scores Display -->
+                    <div id="high-scores">
                     <h3>🏆 TOP SCORES</h3>
                     <div class="score-entry">
                         <span class="rank">1.</span>
@@ -930,6 +963,14 @@
                         <span class="initials" id="hs-initials-3">---</span>
                         <span class="points" id="hs-score-3">0</span>
                     </div>
+                </div>
+                </div><!-- end score-leaderboard-row -->
+                
+                <!-- Initials input (shows only for new high score) -->
+                <div id="initials-form">
+                    <h3>🏆 NEW HIGH SCORE!</h3>
+                    <input type="text" id="initials-input" maxlength="5" placeholder="ABCDE" autocomplete="off">
+                    <button id="submit-initials-btn">SUBMIT</button>
                 </div>
                 
                 <div class="button-row">
@@ -1035,6 +1076,40 @@
         let bullCharging = false;
         let bullX = -150;
         const bullSpeed = 25;
+        
+        // Background colors that cycle every 100 points (subtle pastel variations)
+        const bgColors = [
+            'linear-gradient(180deg, #87CEEB 0%, #b8e6b8 100%)', // Sky blue to green (default)
+            'linear-gradient(180deg, #89CFF0 0%, #A7D8DE 100%)', // Light blue tones
+            'linear-gradient(180deg, #98D8C8 0%, #B5EAD7 100%)', // Mint green tones
+            'linear-gradient(180deg, #A8DADC 0%, #C5E8E8 100%)', // Seafoam
+            'linear-gradient(180deg, #B5D4E8 0%, #D4E5ED 100%)', // Pale blue
+            'linear-gradient(180deg, #C1E1C1 0%, #D4EDDA 100%)', // Sage green
+            'linear-gradient(180deg, #B8D4E3 0%, #C9E4DE 100%)', // Sky to mint
+            'linear-gradient(180deg, #A2C4C9 0%, #B5D8D8 100%)', // Muted teal
+        ];
+        let lastBgIndex = 0;
+        let bgTransitioning = false;
+        const bgOverlay = document.getElementById('bg-overlay');
+        
+        function updateBackgroundColor() {
+            const bgIndex = Math.floor(score / 100) % bgColors.length;
+            if (bgIndex !== lastBgIndex && !bgTransitioning) {
+                bgTransitioning = true;
+                
+                // Set overlay to new color and fade it in
+                bgOverlay.style.background = bgColors[bgIndex];
+                bgOverlay.classList.add('visible');
+                
+                // After fade completes, update main bg and hide overlay
+                setTimeout(() => {
+                    gameContainer.style.background = bgColors[bgIndex];
+                    bgOverlay.classList.remove('visible');
+                    bgTransitioning = false;
+                    lastBgIndex = bgIndex;
+                }, 1500);
+            }
+        }
         const chargingBull = document.getElementById('charging-bull');
         const chargesCount = document.getElementById('charges-count');
         const bullChargesDisplay = document.getElementById('bull-charges');
@@ -1543,13 +1618,11 @@
         }
         
         function triggerBullCharge() {
-            if (bullCharges <= 0 || bullCharging || !gameRunning) return;
+            if (bullCharging || !gameRunning) return;
             
-            bullCharges--;
-            chargesCount.textContent = bullCharges;
-            if (bullCharges === 0) {
-                bullChargesDisplay.classList.add('empty');
-            }
+            // Deduct 20 points for using bull charge
+            score = Math.max(0, score - 20);
+            scoreDisplay.textContent = score;
             
             bullCharging = true;
             bullX = -150;
@@ -1594,6 +1667,7 @@
                     furniture.splice(i, 1);
                     score += 5; // Bonus points for destroying furniture
                     scoreDisplay.textContent = score;
+                    updateBackgroundColor();
                 }
             }
             
@@ -1606,11 +1680,9 @@
         }
         
         function resetBullCharges() {
-            bullCharges = 3;
             bullCharging = false;
             bullX = -150;
-            chargesCount.textContent = bullCharges;
-            bullChargesDisplay.classList.remove('empty');
+            chargesCount.textContent = '∞';
             chargingBull.classList.remove('charging');
             chargingBull.style.left = '-150px';
         }
@@ -1767,6 +1839,7 @@
                     furniture.splice(i, 1);
                     score += 10;
                     scoreDisplay.textContent = score;
+                    updateBackgroundColor();
                 }
             }
             
@@ -1799,6 +1872,12 @@
             // Reset bull charges
             resetBullCharges();
             
+            // Reset background color
+            lastBgIndex = 0;
+            bgTransitioning = false;
+            gameContainer.style.background = bgColors[0];
+            bgOverlay.classList.remove('visible');
+            
             // Clear old furniture
             document.querySelectorAll('.furniture').forEach(f => f.remove());
             
@@ -1814,6 +1893,9 @@
             startScreen.classList.add('hidden');
             gameOverScreen.classList.remove('active');
             gameOverContent.classList.remove('show');
+            
+            // Hide no-highscore image
+            document.getElementById('no-highscore-img').classList.remove('show');
             
             // Start game loop
             gameLoopId = requestAnimationFrame(update);
@@ -1860,6 +1942,10 @@
             const initialsForm = document.getElementById('initials-form');
             const initialsInput = document.getElementById('initials-input');
             
+            // Hide the no-highscore image initially
+            const noHighScoreImg = document.getElementById('no-highscore-img');
+            noHighScoreImg.classList.remove('show');
+            
             if (rank > 0 && score > 0) {
                 // Made the leaderboard! Show initials input
                 pendingHighScore = score;
@@ -1879,6 +1965,17 @@
                 }
             } else {
                 initialsForm.classList.remove('show');
+                
+                // No high score - show the image and play sound
+                setTimeout(() => {
+                    noHighScoreImg.classList.add('show');
+                    const noHighScoreAudio = document.getElementById('no-highscore-audio');
+                    if (noHighScoreAudio) {
+                        noHighScoreAudio.currentTime = 0;
+                        noHighScoreAudio.volume = 0.7;
+                        noHighScoreAudio.play().catch(() => {});
+                    }
+                }, 500);
             }
         }
         
