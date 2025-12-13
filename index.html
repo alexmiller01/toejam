@@ -1,0 +1,1585 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🦶 TOE JAM</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Barrio&family=Delius&display=swap');
+        
+        :root {
+            --cream: #f5f0e1;
+            --blue: #5b6ee1;
+            --orange: #ff6a35;
+            --black: #1a1a2e;
+            --white: #ffffff;
+            /* Playful bright colors */
+            --bright-yellow: #ffe135;
+            --bright-red: #ff4757;
+            --bright-purple: #8854d0;
+            --bright-teal: #2bcbba;
+            --bright-pink: #ff6b81;
+            --soft-purple: #a55eea;
+            --dark-purple: #5f27cd;
+            --card-white: #ffffff;
+            --card-shadow: rgba(0,0,0,0.15);
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            overflow: hidden;
+            font-family: 'Delius', cursive;
+            min-height: 100vh;
+        }
+        
+        /* WINDOWS 95 DESKTOP */
+        #desktop {
+            width: 100vw;
+            height: 100vh;
+            background: #008080; /* Classic Win95 teal */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 15px;
+            padding-bottom: 45px; /* Space for taskbar */
+            position: relative;
+        }
+        
+        /* Win95 Taskbar */
+        #taskbar {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 32px;
+            background: #c0c0c0;
+            border-top: 2px solid #ffffff;
+            display: flex;
+            align-items: center;
+            padding: 2px 4px;
+            z-index: 9999;
+            box-shadow: inset 0 1px 0 #dfdfdf;
+        }
+        
+        #start-button {
+            background: #c0c0c0;
+            border: none;
+            border-top: 2px solid #ffffff;
+            border-left: 2px solid #ffffff;
+            border-right: 2px solid #808080;
+            border-bottom: 2px solid #808080;
+            padding: 2px 6px;
+            font-family: 'Segoe UI', Tahoma, sans-serif;
+            font-size: 12px;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            cursor: pointer;
+            height: 24px;
+        }
+        
+        #start-button:active {
+            border-top: 2px solid #808080;
+            border-left: 2px solid #808080;
+            border-right: 2px solid #ffffff;
+            border-bottom: 2px solid #ffffff;
+        }
+        
+        #start-button img, #start-button span.win-logo {
+            width: 16px;
+            height: 16px;
+        }
+        
+        .win-logo {
+            display: inline-block;
+            background: linear-gradient(135deg, #ff0000 25%, #00ff00 25%, #00ff00 50%, #0000ff 50%, #0000ff 75%, #ffff00 75%);
+            width: 16px;
+            height: 16px;
+        }
+        
+        #taskbar-time {
+            margin-left: auto;
+            background: #c0c0c0;
+            border-top: 2px solid #808080;
+            border-left: 2px solid #808080;
+            border-right: 2px solid #ffffff;
+            border-bottom: 2px solid #ffffff;
+            padding: 2px 8px;
+            font-family: 'Segoe UI', Tahoma, sans-serif;
+            font-size: 11px;
+            height: 22px;
+            display: flex;
+            align-items: center;
+        }
+        
+        .taskbar-divider {
+            width: 2px;
+            height: 24px;
+            margin: 0 4px;
+            border-left: 1px solid #808080;
+            border-right: 1px solid #ffffff;
+        }
+        
+        .taskbar-app {
+            background: #c0c0c0;
+            border-top: 2px solid #808080;
+            border-left: 2px solid #808080;
+            border-right: 2px solid #ffffff;
+            border-bottom: 2px solid #ffffff;
+            padding: 2px 8px;
+            font-family: 'Segoe UI', Tahoma, sans-serif;
+            font-size: 11px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            min-width: 120px;
+        }
+        
+        /* BROWSER WINDOW */
+        #browser-window {
+            width: 98%;
+            max-width: 1400px;
+            height: 96%;
+            background: var(--card-white);
+            border: 4px solid var(--black);
+            border-radius: 24px;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 8px 8px 0 var(--black);
+            overflow: hidden;
+            position: relative;
+            z-index: 10;
+        }
+        
+        /* Title Bar */
+        #title-bar {
+            height: 50px;
+            background: var(--bright-red);
+            border-bottom: 4px solid var(--black);
+            display: flex;
+            align-items: center;
+            padding: 0 15px;
+            gap: 10px;
+        }
+        
+        .window-btn {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            border: 3px solid var(--black);
+            cursor: pointer;
+        }
+        
+        .btn-close { background: #ff6b6b; }
+        .btn-minimize { background: var(--bright-yellow); }
+        .btn-maximize { background: var(--bright-teal); }
+        
+        #title-bar .title-text {
+            flex: 1;
+            text-align: center;
+            font-family: 'Barrio', cursive;
+            font-size: 20px;
+            color: var(--white);
+            text-shadow: 2px 2px 0 var(--black);
+        }
+        
+        /* Navigation Bar */
+        #nav-bar {
+            height: 50px;
+            background: var(--card-white);
+            border-bottom: 4px solid var(--black);
+            display: flex;
+            align-items: center;
+            padding: 0 12px;
+            gap: 10px;
+        }
+        
+        .nav-btn {
+            width: 36px;
+            height: 36px;
+            background: var(--bright-yellow);
+            border: 3px solid var(--black);
+            border-radius: 10px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            color: var(--black);
+            font-size: 18px;
+            font-weight: bold;
+            transition: transform 0.1s, box-shadow 0.1s;
+            box-shadow: 3px 3px 0 var(--black);
+        }
+        
+        .nav-btn:hover {
+            background: var(--bright-pink);
+            transform: translate(-2px, -2px);
+            box-shadow: 5px 5px 0 var(--black);
+        }
+        
+        #url-bar {
+            flex: 1;
+            height: 36px;
+            background: var(--bright-purple);
+            border: 3px solid var(--black);
+            border-radius: 18px;
+            padding: 0 15px;
+            font-family: 'Delius', cursive;
+            font-size: 14px;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            color: white;
+            box-shadow: inset 2px 2px 0 rgba(0,0,0,0.2);
+        }
+        
+        #url-bar::before {
+            content: '🎮';
+            margin-right: 10px;
+        }
+        
+        /* Toolbar - hide for cleaner look */
+        #toolbar {
+            display: none;
+        }
+        
+        /* Browser Content Area */
+        #browser-content {
+            flex: 1;
+            position: relative;
+            overflow: hidden;
+            background: linear-gradient(180deg, #87CEEB 0%, #98D8C8 100%);
+            min-height: 300px;
+        }
+        
+        /* Status Bar */
+        #status-bar {
+            height: 35px;
+            background: var(--dark-purple);
+            border-top: 4px solid var(--black);
+            display: flex;
+            align-items: center;
+            padding: 0 15px;
+            font-size: 16px;
+            color: white;
+            gap: 20px;
+        }
+        
+        .status-section {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            background: var(--soft-purple);
+            padding: 4px 12px;
+            border-radius: 12px;
+            border: 2px solid var(--black);
+        }
+        
+        /* Desktop Icons */
+        /* Win95 Desktop Icons */
+        .desktop-icon {
+            position: absolute;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            cursor: pointer;
+            padding: 4px;
+            width: 70px;
+        }
+        
+        .desktop-icon:hover .label {
+            background: #000080;
+            color: white;
+        }
+        
+        .desktop-icon .icon {
+            font-size: 32px;
+            filter: none;
+        }
+        
+        .desktop-icon .label {
+            font-family: 'Segoe UI', Tahoma, sans-serif;
+            font-size: 11px;
+            font-weight: normal;
+            color: white;
+            text-align: center;
+            background: transparent;
+            padding: 1px 2px;
+            border-radius: 0;
+            border: 1px dotted transparent;
+            text-shadow: 1px 1px 1px black, -1px -1px 1px black, 1px -1px 1px black, -1px 1px 1px black;
+        }
+        
+        #icon-1 { top: 10px; left: 10px; }
+        #icon-2 { top: 90px; left: 10px; }
+        #icon-3 { top: 170px; left: 10px; }
+        
+        #game-container {
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            top: 0;
+            left: 0;
+            overflow: hidden;
+            background: linear-gradient(180deg, #87CEEB 0%, #b8e6b8 100%);
+        }
+        
+        /* Floor */
+        #floor {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 25%;
+            background: var(--bright-teal);
+            border-top: 5px solid var(--black);
+        }
+        
+        /* Floor pattern - moving stripes */
+        #floor-pattern {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 200%;
+            height: 25%;
+            background: repeating-linear-gradient(
+                90deg,
+                var(--bright-teal) 0px,
+                var(--bright-teal) 60px,
+                #20a99a 60px,
+                #20a99a 70px
+            );
+            animation: floorScroll 0.4s linear infinite;
+        }
+        
+        @keyframes floorScroll {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-70px); }
+        }
+        
+        /* Ceiling */
+        #ceiling {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 15%;
+            background: var(--bright-purple);
+            border-bottom: 5px solid var(--black);
+            display: flex;
+            align-items: center;
+            overflow: hidden;
+        }
+        
+        /* Moving clouds/decoration in ceiling */
+        #ceiling::before {
+            content: '☁️ ☁️ ☁️ ☁️ ☁️ ☁️ ☁️ ☁️';
+            position: absolute;
+            font-size: 30px;
+            white-space: nowrap;
+            animation: cloudsScroll 8s linear infinite;
+            opacity: 0.5;
+        }
+        
+        @keyframes cloudsScroll {
+            0% { transform: translateX(100%); }
+            100% { transform: translateX(-100%); }
+        }
+        
+        /* The foot */
+        #player-foot {
+            position: absolute;
+            left: 25px;
+            width: 120px;
+            height: 96px;
+            z-index: 100;
+            transition: top 0.08s ease-out;
+            filter: drop-shadow(3px 3px 0 rgba(0,0,0,0.35));
+        }
+        
+        #player-foot svg {
+            width: 100%;
+            height: 100%;
+        }
+        
+        #player-foot.hurt {
+            animation: footHurt 0.2s ease-in-out;
+        }
+        
+        #player-foot.hurt .foot-body {
+            fill: #ff6b6b;
+        }
+        
+        @keyframes footHurt {
+            0%, 100% { transform: rotate(0deg); }
+            25% { transform: rotate(-20deg) scale(1.15); }
+            75% { transform: rotate(20deg) scale(1.15); }
+        }
+        
+        /* Furniture obstacles */
+        .furniture {
+            position: absolute;
+            z-index: 50;
+            filter: drop-shadow(-4px 4px 0 var(--black));
+            pointer-events: none;
+            transition: transform 0.1s;
+        }
+        
+        .furniture svg {
+            width: 100%;
+            height: 100%;
+        }
+        
+        /* Score display */
+        #score {
+            position: absolute;
+            top: 18%;
+            left: 15px;
+            font-family: 'Barrio', cursive;
+            font-size: 28px;
+            color: var(--black);
+            background: var(--bright-yellow);
+            padding: 8px 20px;
+            border: 4px solid var(--black);
+            border-radius: 16px;
+            z-index: 1000;
+            box-shadow: 4px 4px 0 var(--black);
+        }
+        
+        #speed-indicator {
+            position: absolute;
+            top: 18%;
+            right: 15px;
+            font-family: 'Delius', cursive;
+            font-weight: 700;
+            font-size: 16px;
+            color: white;
+            background: var(--bright-red);
+            padding: 8px 15px;
+            border: 4px solid var(--black);
+            border-radius: 16px;
+            box-shadow: 4px 4px 0 var(--black);
+        }
+        
+        /* Warning flash */
+        .warning {
+            position: absolute;
+            right: 0;
+            width: 8px;
+            background: var(--orange);
+            animation: warningFlash 0.1s ease-in-out infinite alternate;
+            z-index: 200;
+        }
+        
+        @keyframes warningFlash {
+            0% { opacity: 1; }
+            100% { opacity: 0.3; }
+        }
+        
+        /* Start screen */
+        #start-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            background: var(--bright-yellow);
+            z-index: 2000;
+            gap: 15px;
+        }
+        
+        #start-screen .card {
+            background: var(--card-white);
+            border: 4px solid var(--black);
+            border-radius: 24px;
+            padding: 30px 50px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 15px;
+            box-shadow: 8px 8px 0 var(--black);
+            max-width: 90%;
+        }
+        
+        #start-screen h1 {
+            font-family: 'Barrio', cursive;
+            font-size: clamp(50px, 12vw, 90px);
+            color: var(--black);
+            text-align: center;
+            line-height: 1;
+        }
+        
+        #start-screen h1 .highlight {
+            color: var(--bright-red);
+            display: block;
+        }
+        
+        #start-screen h1 .highlight-inline {
+            color: var(--bright-red);
+        }
+        
+        #start-screen .preview-foot {
+            width: 80px;
+            height: 100px;
+            animation: footBounce 0.6s ease-in-out infinite;
+            filter: drop-shadow(3px 3px 0 var(--black));
+        }
+        
+        #start-screen .preview-foot svg {
+            width: 100%;
+            height: 100%;
+        }
+        
+        @keyframes footBounce {
+            0%, 100% { transform: translateX(0) rotate(-3deg); }
+            50% { transform: translateX(10px) rotate(3deg); }
+        }
+        
+        #start-screen .instructions {
+            font-family: 'Delius', cursive;
+            font-size: 18px;
+            font-weight: 500;
+            color: white;
+            text-align: center;
+            max-width: 350px;
+            line-height: 1.5;
+            background: var(--bright-purple);
+            padding: 15px 25px;
+            border: 4px solid var(--black);
+            border-radius: 16px;
+        }
+        
+        #start-screen .instructions span {
+            color: var(--bright-yellow);
+            font-weight: 700;
+        }
+        
+        button {
+            font-family: 'Barrio', cursive;
+            font-size: 24px;
+            padding: 14px 50px;
+            background: var(--bright-red);
+            color: white;
+            border: 4px solid var(--black);
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.1s ease;
+            letter-spacing: 1px;
+            box-shadow: 5px 5px 0 var(--black);
+        }
+        
+        button:hover {
+            transform: translate(-3px, -3px);
+            box-shadow: 8px 8px 0 var(--black);
+            background: #ff5a6a;
+        }
+        
+        button:active {
+            transform: translate(2px, 2px);
+            box-shadow: 3px 3px 0 var(--black);
+        }
+        
+        .controls-display {
+            display: flex;
+            gap: 12px;
+        }
+        
+        .key-hint {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .key {
+            width: 50px;
+            height: 50px;
+            background: var(--bright-yellow);
+            border: 4px solid var(--black);
+            border-radius: 12px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: var(--black);
+            font-size: 22px;
+            font-family: 'Delius', cursive;
+            font-weight: 700;
+            box-shadow: 3px 3px 0 var(--black);
+        }
+        
+        .key-label {
+            font-family: 'Delius', cursive;
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--black);
+            text-transform: uppercase;
+        }
+        
+        /* Game over screen - FULLSCREEN EXPLOSION */
+        #game-over-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--black);
+            z-index: 3000;
+            display: none;
+            flex-direction: column;
+        }
+        
+        #game-over-screen.active {
+            display: flex;
+        }
+        
+        #explosion-container {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        #explosion-title-bar {
+            display: none;
+        }
+        
+        #explosion-gif {
+            width: 100%;
+            flex: 1;
+            background: var(--black) url('https://media.giphy.com/media/XUFPGrX5Zis6Y/giphy.gif') center center no-repeat;
+            background-size: cover;
+            cursor: pointer;
+        }
+        
+        #game-over-content {
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+            padding: 30px;
+            background: var(--bright-yellow);
+            border-top: 6px solid var(--black);
+        }
+        
+        #game-over-content.show {
+            display: flex;
+        }
+        
+        .fart-icon {
+            width: 80px;
+            height: 80px;
+            background: #8BC34A;
+            border-radius: 50%;
+            border: 4px solid var(--black);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 50px;
+            box-shadow: 4px 4px 0 var(--black);
+            cursor: pointer;
+            transition: transform 0.1s, box-shadow 0.1s;
+        }
+        
+        .fart-icon:hover {
+            transform: scale(1.1);
+            box-shadow: 6px 6px 0 var(--black);
+        }
+        
+        .fart-icon:active {
+            transform: scale(0.95);
+            box-shadow: 2px 2px 0 var(--black);
+        }
+        
+        #game-over-content h2 {
+            font-family: 'Barrio', cursive;
+            font-size: 32px;
+            color: var(--black);
+            text-align: center;
+        }
+        
+        #game-over-content p {
+            font-family: 'Delius', cursive;
+            font-size: 18px;
+            color: #666;
+        }
+        
+        #final-score {
+            font-family: 'Barrio', cursive;
+            font-size: 28px;
+            color: white;
+            background: var(--bright-purple);
+            padding: 12px 50px;
+            border: 4px solid var(--black);
+            border-radius: 16px;
+            box-shadow: 4px 4px 0 var(--black);
+        }
+        
+        .button-row {
+            display: flex;
+            gap: 15px;
+        }
+        
+        .button-row button {
+            font-size: 22px;
+            padding: 12px 35px;
+        }
+        
+        .hidden {
+            display: none !important;
+        }
+        
+        /* Screen shake */
+        @keyframes screenShake {
+            0%, 100% { transform: translate(0, 0); }
+            20% { transform: translate(-15px, 10px); }
+            40% { transform: translate(15px, -10px); }
+            60% { transform: translate(-10px, -15px); }
+            80% { transform: translate(10px, 15px); }
+        }
+        
+        #game-container.shake {
+            animation: screenShake 0.4s ease-in-out;
+        }
+        
+        /* Decorative elements */
+        .deco-circle {
+            position: absolute;
+            border-radius: 50%;
+            border: 4px solid var(--black);
+            pointer-events: none;
+            z-index: 10;
+        }
+    </style>
+</head>
+<body>
+    <div id="desktop">
+        <!-- Win95 Desktop Icons -->
+        <div class="desktop-icon" id="icon-1">
+            <span class="icon">🦶</span>
+            <span class="label">Toe Jam</span>
+        </div>
+        <div class="desktop-icon" id="icon-2">
+            <span class="icon">📁</span>
+            <span class="label">Games</span>
+        </div>
+        <div class="desktop-icon" id="icon-3">
+            <span class="icon">🗑️</span>
+            <span class="label">Trash</span>
+        </div>
+        
+        <!-- Browser Window -->
+        <div id="browser-window">
+            <div id="title-bar">
+                <div class="window-btn btn-close"></div>
+                <div class="window-btn btn-minimize"></div>
+                <div class="window-btn btn-maximize"></div>
+                <span class="title-text">🦶 TOE JAM - Internet Explorer</span>
+            </div>
+            
+            <div id="nav-bar">
+                <div class="nav-btn">◀</div>
+                <div class="nav-btn">▶</div>
+                <div class="nav-btn">🔄</div>
+                <div class="nav-btn">🏠</div>
+                <div id="url-bar">https://www.toejam.game/play</div>
+            </div>
+            
+            <div id="toolbar">
+                <span class="toolbar-item">📁 File</span>
+                <span class="toolbar-item">✏️ Edit</span>
+                <span class="toolbar-item">👁️ View</span>
+                <span class="toolbar-item">⭐ Favorites</span>
+                <span class="toolbar-item">❓ Help</span>
+            </div>
+            
+            <div id="browser-content">
+                <div id="game-container">
+        <div id="ceiling"></div>
+        <div id="floor"></div>
+        <div id="floor-pattern"></div>
+        
+        <div id="score">0</div>
+        <div id="speed-indicator">SPEED 1.0x</div>
+        
+        <div id="player-foot">
+            <svg viewBox="0 0 745.11 585.15" xmlns="http://www.w3.org/2000/svg">
+                <path class="foot-body" fill="#c69376" d="M59.73,0c7.08,3.11,10.51,8.2,10.58,16.25l.71,80.89c.26,29.23-.6,96.23-10.78,121.53l-23.75,59.02c-12.39,30.78-13.33,61.27,9.87,87.11,19.53,21.75,52.12,28.83,80.29,34.26,21.35,4.11,41.73,7.8,62.78,13.19,34.63,8.87,66.38,23.74,93.74,46.65l32.53,27.24c29.86,25,65.02,41.62,102.56,51.59,6.92,1.84,13.73,3.36,20.06,6.24,15.53,7.04,31.33,12.25,48.56,13.15,12.4.65,27.38-3.34,26.67-17.07-.25-4.76-2.75-11.44-8.59-12.63l-22.81-4.66c-8.22-1.68-15.92-4.28-23.51-7.67-8.19-3.66-11.64-12.79-7.19-20.47s13.13-8.07,21.1-4.13c23.23,11.49,48.23,1.67,64.12,30.25,12.95,1.25,42.36-7.34,37.56-23.88-.88-3.04-4.62-6.82-8.69-7.85l-21.94-5.56c-13.54-3.43-26.19-8.92-39.07-14.25-6.65-2.75-9.43-10.2-7.5-16.58,1.8-5.95,8.03-11.06,15.24-9.62,5.24,1.04,10.48,3.36,15.49,5.47,13.26,5.6,26.41,9.2,40.36,12.35,11.02,2.48,20.61,7.87,27.37,17.03,11.36-2.08,27.33-7.89,30.25-20.48,3.42-14.77-18.74-19.66-29.55-21.15-16.66-2.3-32.81-6.02-47.37-14.31-7-3.98-7.91-13.06-4.47-18.92,4.04-6.87,12.18-8.17,19.3-4.71,32.66,15.92,56.19,5.32,81.3,30.49,10.63-1.65,32.26-8.01,32.9-20.37.25-4.92-.25-11-4.93-13.39-6.42-3.28-13.91-4.57-21.19-5.2-20.06-1.74-39.47-4.83-58.41-11.4-7.64-2.65-10.67-10.89-8.25-17.88,2.26-6.52,9.53-10.6,16.93-8.33,17.05,5.24,34.01,8.44,51.94,9.87,17.28,1.38,37.15,6,46.18,21.53,14.7-5.96,21.03-22.9,14.63-37.1-4.7-10.43-13.31-17.55-24.27-20.93-16.03-4.94-31.79-8.6-48.56-11.19l-75.21-11.65c-17.36-2.69-33.17-7.33-49.76-13.13-27.24-9.51-52.36-22.13-79.16-33l-57.02-23.13c-14.61-5.93-28.35-12.55-41.41-21.07-10.02-6.53-15.97-15.94-17.65-27.76-1.82-12.85-2.07-25.67-1.4-38.87l1.85-36.52-.13-93.02c-.01-8.25,3.78-13.42,11.06-16.24H59.73ZM124.47,292.98c-1.17-6.18-2.06-32.32,8.34-30.14,8.51,1.79,1,9.74,2.47,25.71,1.51,16.37,14.05,27.93,30.11,30.37,2.58.39,3.38,4.98,2.55,6.98-4,9.55-37.73-2.46-43.47-32.92Z"/>
+                <path fill="#1a1a1a" d="M333.07,0c-7.28,2.81-11.07,7.99-11.06,16.24l.13,93.02-1.85,36.52c-.67,13.2-.42,26.02,1.4,38.87,1.67,11.83,7.62,21.23,17.65,27.76,13.06,8.52,26.8,15.14,41.41,21.07l57.02,23.13c26.8,10.87,51.92,23.48,79.16,33,16.59,5.79,32.4,10.44,49.76,13.13l75.21,11.65c16.77,2.6,32.53,6.25,48.56,11.19,10.96,3.38,19.57,10.5,24.27,20.93,6.4,14.2.07,31.14-14.63,37.1-9.03-15.53-28.91-20.15-46.18-21.53-17.93-1.43-34.89-4.63-51.94-9.87-7.39-2.27-14.66,1.8-16.93,8.33-2.42,6.99.61,15.23,8.25,17.88,18.94,6.57,38.35,9.66,58.41,11.4,7.28.63,14.77,1.92,21.19,5.2,4.69,2.4,5.19,8.47,4.93,13.39-.64,12.36-22.27,18.72-32.9,20.37-25.12-25.17-48.64-14.57-81.3-30.49-7.12-3.47-15.27-2.16-19.3,4.71-3.44,5.86-2.53,14.93,4.47,18.92,14.56,8.29,30.71,12.01,47.37,14.31,10.81,1.49,32.98,6.38,29.55,21.15-2.92,12.59-18.89,18.4-30.25,20.48-6.75-9.16-16.35-14.55-27.37-17.03-13.96-3.14-27.11-6.74-40.36-12.35-5.01-2.12-10.25-4.43-15.49-5.47-7.21-1.44-13.44,3.67-15.24,9.62-1.93,6.38.85,13.83,7.5,16.58,12.88,5.33,25.53,10.82,39.07,14.25l21.94,5.56c4.07,1.03,7.81,4.81,8.69,7.85,4.79,16.54-24.61,25.13-37.56,23.88-15.89-28.59-40.89-18.76-64.12-30.25-7.96-3.94-16.59-3.65-21.1,4.13s-1,16.81,7.19,20.47c7.6,3.4,15.29,5.99,23.51,7.67l22.81,4.66c5.84,1.19,8.34,7.87,8.59,12.63.72,13.74-14.27,17.72-26.67,17.07-17.23-.9-33.03-6.11-48.56-13.15-6.34-2.87-13.14-4.4-20.06-6.24-37.54-9.97-72.71-26.58-102.56-51.59l-32.53-27.24c-27.36-22.91-59.11-37.78-93.74-46.65-21.05-5.39-41.44-9.08-62.78-13.19-28.16-5.42-60.75-12.51-80.29-34.26-23.2-25.84-22.26-56.33-9.87-87.11l23.75-59.02c10.18-25.29,11.04-92.3,10.78-121.53l-.71-80.89c-.07-8.05-3.5-13.14-10.58-16.25h-6.07c-6.68,2.59-11.32,7.34-11.24,15.18l.81,77.92c.34,33.33.38,85.9-9.55,116.91-6.56,20.49-16.13,39.03-23.71,59.11-4.9,12.99-7.78,25.65-9.96,38.64v20.25c4.97,33.02,24.14,61.98,54.66,77.81,14.11,7.32,28.53,12.51,44.15,15.69l42.27,8.6c46.23,9.4,81.54,16.85,119.98,46.88,38,29.7,46.97,43.84,93.24,66.82,22.26,11.05,45.07,17.04,68.76,24.58,18.02,5.73,34.27,14.67,53.91,15.47,1.53.06,4.12.73,4.93,1.29h15.19l9.12-2.08c17.44-3.98,30.92-16.55,34.47-34.34,27.85-1.77,56.8-14.13,61.85-43.86,26.53-5.77,49.25-20.3,51.5-49.37,24.27-5.68,47.91-16.79,51.7-44.06,22.06-6.67,34.8-24.84,39.39-45.98v-14.17c-4.52-24.55-20.98-44.21-45.45-51.94-19.27-6.09-38.27-10.17-58.39-13.25l-64.05-9.79c-16.9-2.58-32.54-6.38-48.61-12.13-21.98-7.85-42.73-16.52-64.02-26.17-15.86-7.19-31.02-13.42-47.17-19.73-17.22-6.73-33.69-13.24-50.08-21.77-16.85-8.77-20.34-10.27-19.38-35.51l1.86-48.78.14-96.91c.01-7.76-4.28-12.38-10.8-15.32h-6.07Z"/>
+                <path fill="#c69376" d="M124.47,292.98c5.74,30.46,39.47,42.47,43.47,32.92.83-1.99.04-6.58-2.55-6.98-16.06-2.44-28.6-14-30.11-30.37-1.47-15.97,6.03-23.92-2.47-25.71-10.4-2.18-9.5,23.96-8.34,30.14Z"/>
+            </svg>
+        </div>
+                </div><!-- end game-container -->
+            </div><!-- end browser-content -->
+            
+            <div id="status-bar">
+                <span class="status-section">✅ Done</span>
+                <span class="status-section">🌐 Internet</span>
+                <span class="status-section" id="clock-display">12:00 PM</span>
+            </div>
+        </div><!-- end browser-window -->
+    </div><!-- end desktop -->
+    
+    <div id="start-screen">
+        <div class="card">
+        <h1>TOE <span class="highlight-inline">JAM</span></h1>
+        <div class="preview-foot">
+            <svg viewBox="0 0 745.11 585.15" xmlns="http://www.w3.org/2000/svg">
+                <path fill="#c69376" d="M59.73,0c7.08,3.11,10.51,8.2,10.58,16.25l.71,80.89c.26,29.23-.6,96.23-10.78,121.53l-23.75,59.02c-12.39,30.78-13.33,61.27,9.87,87.11,19.53,21.75,52.12,28.83,80.29,34.26,21.35,4.11,41.73,7.8,62.78,13.19,34.63,8.87,66.38,23.74,93.74,46.65l32.53,27.24c29.86,25,65.02,41.62,102.56,51.59,6.92,1.84,13.73,3.36,20.06,6.24,15.53,7.04,31.33,12.25,48.56,13.15,12.4.65,27.38-3.34,26.67-17.07-.25-4.76-2.75-11.44-8.59-12.63l-22.81-4.66c-8.22-1.68-15.92-4.28-23.51-7.67-8.19-3.66-11.64-12.79-7.19-20.47s13.13-8.07,21.1-4.13c23.23,11.49,48.23,1.67,64.12,30.25,12.95,1.25,42.36-7.34,37.56-23.88-.88-3.04-4.62-6.82-8.69-7.85l-21.94-5.56c-13.54-3.43-26.19-8.92-39.07-14.25-6.65-2.75-9.43-10.2-7.5-16.58,1.8-5.95,8.03-11.06,15.24-9.62,5.24,1.04,10.48,3.36,15.49,5.47,13.26,5.6,26.41,9.2,40.36,12.35,11.02,2.48,20.61,7.87,27.37,17.03,11.36-2.08,27.33-7.89,30.25-20.48,3.42-14.77-18.74-19.66-29.55-21.15-16.66-2.3-32.81-6.02-47.37-14.31-7-3.98-7.91-13.06-4.47-18.92,4.04-6.87,12.18-8.17,19.3-4.71,32.66,15.92,56.19,5.32,81.3,30.49,10.63-1.65,32.26-8.01,32.9-20.37.25-4.92-.25-11-4.93-13.39-6.42-3.28-13.91-4.57-21.19-5.2-20.06-1.74-39.47-4.83-58.41-11.4-7.64-2.65-10.67-10.89-8.25-17.88,2.26-6.52,9.53-10.6,16.93-8.33,17.05,5.24,34.01,8.44,51.94,9.87,17.28,1.38,37.15,6,46.18,21.53,14.7-5.96,21.03-22.9,14.63-37.1-4.7-10.43-13.31-17.55-24.27-20.93-16.03-4.94-31.79-8.6-48.56-11.19l-75.21-11.65c-17.36-2.69-33.17-7.33-49.76-13.13-27.24-9.51-52.36-22.13-79.16-33l-57.02-23.13c-14.61-5.93-28.35-12.55-41.41-21.07-10.02-6.53-15.97-15.94-17.65-27.76-1.82-12.85-2.07-25.67-1.4-38.87l1.85-36.52-.13-93.02c-.01-8.25,3.78-13.42,11.06-16.24H59.73Z"/>
+                <path fill="#1a1a1a" d="M333.07,0c-7.28,2.81-11.07,7.99-11.06,16.24l.13,93.02-1.85,36.52c-.67,13.2-.42,26.02,1.4,38.87,1.67,11.83,7.62,21.23,17.65,27.76,13.06,8.52,26.8,15.14,41.41,21.07l57.02,23.13c26.8,10.87,51.92,23.48,79.16,33,16.59,5.79,32.4,10.44,49.76,13.13l75.21,11.65c16.77,2.6,32.53,6.25,48.56,11.19,10.96,3.38,19.57,10.5,24.27,20.93,6.4,14.2.07,31.14-14.63,37.1-9.03-15.53-28.91-20.15-46.18-21.53-17.93-1.43-34.89-4.63-51.94-9.87-7.39-2.27-14.66,1.8-16.93,8.33-2.42,6.99.61,15.23,8.25,17.88,18.94,6.57,38.35,9.66,58.41,11.4,7.28.63,14.77,1.92,21.19,5.2,4.69,2.4,5.19,8.47,4.93,13.39-.64,12.36-22.27,18.72-32.9,20.37-25.12-25.17-48.64-14.57-81.3-30.49-7.12-3.47-15.27-2.16-19.3,4.71-3.44,5.86-2.53,14.93,4.47,18.92,14.56,8.29,30.71,12.01,47.37,14.31,10.81,1.49,32.98,6.38,29.55,21.15-2.92,12.59-18.89,18.4-30.25,20.48-6.75-9.16-16.35-14.55-27.37-17.03-13.96-3.14-27.11-6.74-40.36-12.35-5.01-2.12-10.25-4.43-15.49-5.47-7.21-1.44-13.44,3.67-15.24,9.62-1.93,6.38.85,13.83,7.5,16.58,12.88,5.33,25.53,10.82,39.07,14.25l21.94,5.56c4.07,1.03,7.81,4.81,8.69,7.85,4.79,16.54-24.61,25.13-37.56,23.88-15.89-28.59-40.89-18.76-64.12-30.25-7.96-3.94-16.59-3.65-21.1,4.13s-1,16.81,7.19,20.47c7.6,3.4,15.29,5.99,23.51,7.67l22.81,4.66c5.84,1.19,8.34,7.87,8.59,12.63.72,13.74-14.27,17.72-26.67,17.07-17.23-.9-33.03-6.11-48.56-13.15-6.34-2.87-13.14-4.4-20.06-6.24-37.54-9.97-72.71-26.58-102.56-51.59l-32.53-27.24c-27.36-22.91-59.11-37.78-93.74-46.65-21.05-5.39-41.44-9.08-62.78-13.19-28.16-5.42-60.75-12.51-80.29-34.26-23.2-25.84-22.26-56.33-9.87-87.11l23.75-59.02c10.18-25.29,11.04-92.3,10.78-121.53l-.71-80.89c-.07-8.05-3.5-13.14-10.58-16.25h-6.07c-6.68,2.59-11.32,7.34-11.24,15.18l.81,77.92c.34,33.33.38,85.9-9.55,116.91-6.56,20.49-16.13,39.03-23.71,59.11-4.9,12.99-7.78,25.65-9.96,38.64v20.25c4.97,33.02,24.14,61.98,54.66,77.81,14.11,7.32,28.53,12.51,44.15,15.69l42.27,8.6c46.23,9.4,81.54,16.85,119.98,46.88,38,29.7,46.97,43.84,93.24,66.82,22.26,11.05,45.07,17.04,68.76,24.58,18.02,5.73,34.27,14.67,53.91,15.47,1.53.06,4.12.73,4.93,1.29h15.19l9.12-2.08c17.44-3.98,30.92-16.55,34.47-34.34,27.85-1.77,56.8-14.13,61.85-43.86,26.53-5.77,49.25-20.3,51.5-49.37,24.27-5.68,47.91-16.79,51.7-44.06,22.06-6.67,34.8-24.84,39.39-45.98v-14.17c-4.52-24.55-20.98-44.21-45.45-51.94-19.27-6.09-38.27-10.17-58.39-13.25l-64.05-9.79c-16.9-2.58-32.54-6.38-48.61-12.13-21.98-7.85-42.73-16.52-64.02-26.17-15.86-7.19-31.02-13.42-47.17-19.73-17.22-6.73-33.69-13.24-50.08-21.77-16.85-8.77-20.34-10.27-19.38-35.51l1.86-48.78.14-96.91c.01-7.76-4.28-12.38-10.8-15.32h-6.07Z"/>
+            </svg>
+        </div>
+        <p class="instructions">
+            Furniture is FLYING at your foot!<br>
+            <span>↑ ↓</span> or <span>W S</span> to dodge!<br>
+            Don't stub your toe... 💀
+        </p>
+        <button id="start-btn">RUN!</button>
+        <div class="controls-display">
+            <div class="key-hint">
+                <div class="key">↑</div>
+                <span class="key-label">UP</span>
+            </div>
+            <div class="key-hint">
+                <div class="key">↓</div>
+                <span class="key-label">DOWN</span>
+            </div>
+        </div>
+        </div><!-- end card -->
+    </div>
+    
+    <!-- Pixabay fart sound (ID: 83471) - royalty free -->
+    <audio id="fart-audio" preload="auto">
+        <source src="fart-83471.mp3" type="audio/mpeg">
+    </audio>
+    
+    <!-- Proud fart for the fart button -->
+    <audio id="proud-fart-audio" preload="auto">
+        <source src="proud-fart-288263.mp3" type="audio/mpeg">
+    </audio>
+    
+    <div id="game-over-screen">
+        <div id="explosion-container">
+            <div id="explosion-title-bar">
+                <div class="window-btn btn-close"></div>
+                <span class="title-text">⚠️ FATAL ERROR - toe_destroyed.exe</span>
+            </div>
+            <div id="explosion-gif"></div>
+            <div id="game-over-content">
+                <div class="fart-icon" id="fart-btn" title="Click for fart!">💨</div>
+                <h2>GAME OVER</h2>
+                <p style="font-family: VT323; font-size: 20px; color: #666;">A furniture has caused an unexpected collision.</p>
+                <div id="final-score">SCORE: 0</div>
+                <div class="button-row">
+                    <button id="restart-btn">Retry</button>
+                    <button onclick="location.reload()" style="background: linear-gradient(180deg, #888 0%, #666 100%);">Cancel</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Windows 95 Taskbar -->
+    <div id="taskbar">
+        <button id="start-button">
+            <span class="win-logo"></span>
+            Start
+        </button>
+        <div class="taskbar-divider"></div>
+        <div class="taskbar-app">
+            <span>🦶</span> Toe Jam
+        </div>
+        <div id="taskbar-time">12:00 PM</div>
+    </div>
+
+    <script>
+        // Game constants - will be set dynamically
+        let PLAY_AREA_TOP;
+        let PLAY_AREA_BOTTOM;
+        let GAME_WIDTH;
+        let GAME_HEIGHT;
+        const FOOT_HEIGHT = 96;
+        const FOOT_WIDTH = 120;
+        
+        function updateGameDimensions() {
+            const container = document.getElementById('browser-content');
+            if (container) {
+                GAME_HEIGHT = container.clientHeight;
+                GAME_WIDTH = container.clientWidth;
+            } else {
+                GAME_HEIGHT = window.innerHeight;
+                GAME_WIDTH = window.innerWidth;
+            }
+            // Ceiling is 15%, floor starts at 75%
+            PLAY_AREA_TOP = GAME_HEIGHT * 0.16;
+            PLAY_AREA_BOTTOM = GAME_HEIGHT * 0.73;
+            console.log('Game dimensions:', GAME_WIDTH, 'x', GAME_HEIGHT, 'Play area:', PLAY_AREA_TOP, '-', PLAY_AREA_BOTTOM);
+        }
+        
+        updateGameDimensions();
+        window.addEventListener('resize', updateGameDimensions);
+        
+        // Game state
+        let gameRunning = false;
+        let score = 0;
+        let footY;
+        let furniture = [];
+        let keys = {};
+        let gameLoopId;
+        let speed = 1;
+        let lastSpawnTime = 0;
+        let baseSpawnInterval = 2500; // More spaced out - spawn every 2.5 seconds
+        let baseSpeed = 6; // Starting slower, will speed up gradually
+        
+        // DOM elements
+        const gameContainer = document.getElementById('game-container');
+        const playerFoot = document.getElementById('player-foot');
+        const scoreDisplay = document.getElementById('score');
+        const speedIndicator = document.getElementById('speed-indicator');
+        const startScreen = document.getElementById('start-screen');
+        const gameOverScreen = document.getElementById('game-over-screen');
+        const explosionGif = document.getElementById('explosion-gif');
+        const gameOverContent = document.getElementById('game-over-content');
+        const finalScoreDisplay = document.getElementById('final-score');
+        const startBtn = document.getElementById('start-btn');
+        const restartBtn = document.getElementById('restart-btn');
+        const floorPattern = document.getElementById('floor-pattern');
+        
+        // SVG Furniture templates
+        const furnitureSVGs = {
+            // Teal Sofa
+            sofa: `<svg viewBox="0 0 120 80" xmlns="http://www.w3.org/2000/svg">
+                <rect x="5" y="35" width="110" height="35" rx="5" fill="#5bc0be" stroke="#0a0a0a" stroke-width="3"/>
+                <rect x="10" y="20" width="25" height="40" rx="5" fill="#5bc0be" stroke="#0a0a0a" stroke-width="3"/>
+                <rect x="85" y="20" width="25" height="40" rx="5" fill="#5bc0be" stroke="#0a0a0a" stroke-width="3"/>
+                <rect x="35" y="40" width="50" height="25" rx="3" fill="#3a9e9d" stroke="#0a0a0a" stroke-width="2"/>
+                <ellipse cx="45" cy="45" rx="8" ry="6" fill="#f28482" stroke="#0a0a0a" stroke-width="2"/>
+                <ellipse cx="75" cy="45" rx="8" ry="6" fill="#f28482" stroke="#0a0a0a" stroke-width="2"/>
+                <rect x="15" y="70" width="8" height="8" fill="#d4a574" stroke="#0a0a0a" stroke-width="2"/>
+                <rect x="97" y="70" width="8" height="8" fill="#d4a574" stroke="#0a0a0a" stroke-width="2"/>
+            </svg>`,
+            
+            // Green Armchair
+            armchair: `<svg viewBox="0 0 80 90" xmlns="http://www.w3.org/2000/svg">
+                <rect x="10" y="25" width="60" height="45" rx="8" fill="#84c98b" stroke="#0a0a0a" stroke-width="3"/>
+                <rect x="5" y="30" width="15" height="35" rx="5" fill="#84c98b" stroke="#0a0a0a" stroke-width="3"/>
+                <rect x="60" y="30" width="15" height="35" rx="5" fill="#84c98b" stroke="#0a0a0a" stroke-width="3"/>
+                <path d="M20 25 Q40 5 60 25" fill="#84c98b" stroke="#0a0a0a" stroke-width="3"/>
+                <rect x="20" y="45" width="40" height="20" rx="3" fill="#6ab072" stroke="#0a0a0a" stroke-width="2"/>
+                <rect x="18" y="70" width="10" height="15" rx="2" fill="#d4a574" stroke="#0a0a0a" stroke-width="2"/>
+                <rect x="52" y="70" width="10" height="15" rx="2" fill="#d4a574" stroke="#0a0a0a" stroke-width="2"/>
+            </svg>`,
+            
+            // Bed
+            bed: `<svg viewBox="0 0 130 90" xmlns="http://www.w3.org/2000/svg">
+                <rect x="5" y="50" width="120" height="30" rx="3" fill="#8b5a3c" stroke="#0a0a0a" stroke-width="3"/>
+                <rect x="5" y="5" width="120" height="45" rx="5" fill="#f4a259" stroke="#0a0a0a" stroke-width="3"/>
+                <rect x="15" y="35" width="45" height="25" rx="4" fill="#5bc0be" stroke="#0a0a0a" stroke-width="2"/>
+                <rect x="70" y="35" width="45" height="25" rx="4" fill="#5bc0be" stroke="#0a0a0a" stroke-width="2"/>
+                <rect x="10" y="80" width="10" height="10" fill="#6b4226" stroke="#0a0a0a" stroke-width="2"/>
+                <rect x="110" y="80" width="10" height="10" fill="#6b4226" stroke="#0a0a0a" stroke-width="2"/>
+            </svg>`,
+            
+            // Wardrobe
+            wardrobe: `<svg viewBox="0 0 70 100" xmlns="http://www.w3.org/2000/svg">
+                <rect x="5" y="5" width="60" height="85" rx="3" fill="#e8dcc4" stroke="#0a0a0a" stroke-width="3"/>
+                <line x1="35" y1="10" x2="35" y2="85" stroke="#0a0a0a" stroke-width="2"/>
+                <circle cx="28" cy="45" r="4" fill="#0a0a0a"/>
+                <circle cx="42" cy="45" r="4" fill="#0a0a0a"/>
+                <rect x="10" y="90" width="12" height="8" fill="#6b4226" stroke="#0a0a0a" stroke-width="2"/>
+                <rect x="48" y="90" width="12" height="8" fill="#6b4226" stroke="#0a0a0a" stroke-width="2"/>
+            </svg>`,
+            
+            // Chair
+            chair: `<svg viewBox="0 0 60 90" xmlns="http://www.w3.org/2000/svg">
+                <rect x="10" y="5" width="40" height="35" rx="5" fill="#f28482" stroke="#0a0a0a" stroke-width="3"/>
+                <rect x="8" y="40" width="44" height="15" rx="3" fill="#f28482" stroke="#0a0a0a" stroke-width="3"/>
+                <rect x="12" y="55" width="8" height="30" fill="#d4a574" stroke="#0a0a0a" stroke-width="2"/>
+                <rect x="40" y="55" width="8" height="30" fill="#d4a574" stroke="#0a0a0a" stroke-width="2"/>
+            </svg>`,
+            
+            // Desk with Lamp
+            desk: `<svg viewBox="0 0 100 80" xmlns="http://www.w3.org/2000/svg">
+                <rect x="5" y="35" width="90" height="12" rx="2" fill="#f4a259" stroke="#0a0a0a" stroke-width="3"/>
+                <rect x="10" y="47" width="8" height="30" fill="#d4a574" stroke="#0a0a0a" stroke-width="2"/>
+                <rect x="82" y="47" width="8" height="30" fill="#d4a574" stroke="#0a0a0a" stroke-width="2"/>
+                <line x1="70" y1="35" x2="70" y2="15" stroke="#0a0a0a" stroke-width="3"/>
+                <line x1="70" y1="15" x2="85" y2="15" stroke="#0a0a0a" stroke-width="3"/>
+                <circle cx="85" cy="18" r="12" fill="#5bc0be" stroke="#0a0a0a" stroke-width="2"/>
+                <circle cx="85" cy="18" r="6" fill="#f4e259" stroke="#0a0a0a" stroke-width="2"/>
+            </svg>`,
+            
+            // TV Stand
+            tvstand: `<svg viewBox="0 0 90 70" xmlns="http://www.w3.org/2000/svg">
+                <rect x="5" y="5" width="80" height="45" rx="3" fill="#4a3728" stroke="#0a0a0a" stroke-width="3"/>
+                <rect x="10" y="10" width="70" height="15" fill="#0a0a0a"/>
+                <rect x="10" y="30" width="32" height="15" fill="#e8dcc4" stroke="#0a0a0a" stroke-width="2"/>
+                <rect x="48" y="30" width="32" height="15" fill="#e8dcc4" stroke="#0a0a0a" stroke-width="2"/>
+                <rect x="15" y="50" width="15" height="15" fill="#d4a574" stroke="#0a0a0a" stroke-width="2"/>
+                <rect x="60" y="50" width="15" height="15" fill="#d4a574" stroke="#0a0a0a" stroke-width="2"/>
+            </svg>`,
+            
+            // Lamp Table
+            lamptable: `<svg viewBox="0 0 60 90" xmlns="http://www.w3.org/2000/svg">
+                <rect x="10" y="50" width="40" height="10" rx="2" fill="#d4a574" stroke="#0a0a0a" stroke-width="3"/>
+                <rect x="15" y="60" width="8" height="25" fill="#d4a574" stroke="#0a0a0a" stroke-width="2"/>
+                <rect x="37" y="60" width="8" height="25" fill="#d4a574" stroke="#0a0a0a" stroke-width="2"/>
+                <rect x="27" y="25" width="6" height="25" fill="#d4a574" stroke="#0a0a0a" stroke-width="2"/>
+                <path d="M15 25 L30 5 L45 25 Z" fill="#f28482" stroke="#0a0a0a" stroke-width="3"/>
+            </svg>`,
+            
+            // Dresser with Mirror
+            dresser: `<svg viewBox="0 0 80 90" xmlns="http://www.w3.org/2000/svg">
+                <rect x="5" y="40" width="70" height="40" rx="3" fill="#c9a67a" stroke="#0a0a0a" stroke-width="3"/>
+                <rect x="10" y="48" width="25" height="12" rx="2" fill="#a08060" stroke="#0a0a0a" stroke-width="2"/>
+                <rect x="45" y="48" width="25" height="12" rx="2" fill="#a08060" stroke="#0a0a0a" stroke-width="2"/>
+                <rect x="10" y="65" width="60" height="12" rx="2" fill="#a08060" stroke="#0a0a0a" stroke-width="2"/>
+                <ellipse cx="40" cy="20" rx="18" ry="18" fill="#5bc0be" stroke="#f4a259" stroke-width="4"/>
+                <ellipse cx="40" cy="20" rx="14" ry="14" fill="#a8e6e3" stroke="#0a0a0a" stroke-width="2"/>
+                <rect x="15" y="80" width="10" height="8" fill="#6b4226" stroke="#0a0a0a" stroke-width="2"/>
+                <rect x="55" y="80" width="10" height="8" fill="#6b4226" stroke="#0a0a0a" stroke-width="2"/>
+            </svg>`,
+            
+            // Plant
+            plant: `<svg viewBox="0 0 50 80" xmlns="http://www.w3.org/2000/svg">
+                <rect x="12" y="45" width="26" height="30" rx="3" fill="#c9a67a" stroke="#0a0a0a" stroke-width="3"/>
+                <ellipse cx="25" cy="35" rx="20" ry="18" fill="#84c98b" stroke="#0a0a0a" stroke-width="3"/>
+                <ellipse cx="18" cy="25" rx="8" ry="12" fill="#6ab072" stroke="#0a0a0a" stroke-width="2"/>
+                <ellipse cx="32" cy="28" rx="7" ry="10" fill="#6ab072" stroke="#0a0a0a" stroke-width="2"/>
+                <ellipse cx="25" cy="20" rx="6" ry="10" fill="#84c98b" stroke="#0a0a0a" stroke-width="2"/>
+            </svg>`
+        };
+        
+        const furnitureTypes = Object.keys(furnitureSVGs);
+        
+        // Audio context
+        let audioContext;
+        let musicPlaying = false;
+        let musicInterval;
+        
+        function initAudio() {
+            audioContext = new (window.AudioContext || window.webkitAudioContext)();
+        }
+        
+        // Upbeat folk/country dance music
+        function playSillyMusic() {
+            if (!audioContext || musicPlaying) return;
+            musicPlaying = true;
+            
+            // Original upbeat folk-style melody (frequencies in Hz)
+            const melody = [
+                // Energetic folk dance pattern
+                440, 440, 523, 587, 659, 587, 523, 440,  // A A C D E D C A
+                392, 440, 523, 440, 392, 349, 392, 440,  // G A C A G F G A
+                523, 523, 587, 659, 698, 659, 587, 523,  // C C D E F E D C
+                587, 523, 440, 392, 440, 523, 440, 392,  // D C A G A C A G
+            ];
+            
+            // Bass notes for that bouncy feel
+            const bassNotes = [220, 196, 262, 220]; // A G C A
+            
+            let noteIndex = 0;
+            const noteLength = 0.12;
+            const tempo = 140; // BPM-ish feel
+            
+            function playNote() {
+                if (!gameRunning || !audioContext) {
+                    musicPlaying = false;
+                    return;
+                }
+                
+                const now = audioContext.currentTime;
+                const freq = melody[noteIndex % melody.length];
+                
+                // Fiddle-like lead (sawtooth for brightness)
+                const osc = audioContext.createOscillator();
+                const gain = audioContext.createGain();
+                
+                osc.type = 'sawtooth';
+                osc.frequency.setValueAtTime(freq, now);
+                
+                gain.gain.setValueAtTime(0.12, now);
+                gain.gain.exponentialRampToValueAtTime(0.01, now + noteLength);
+                
+                osc.connect(gain);
+                gain.connect(audioContext.destination);
+                
+                osc.start(now);
+                osc.stop(now + noteLength);
+                
+                // Bouncy bass on beats
+                if (noteIndex % 4 === 0) {
+                    const bass = audioContext.createOscillator();
+                    const bassGain = audioContext.createGain();
+                    
+                    bass.type = 'triangle';
+                    const bassFreq = bassNotes[Math.floor(noteIndex / 4) % bassNotes.length];
+                    bass.frequency.setValueAtTime(bassFreq, now);
+                    
+                    bassGain.gain.setValueAtTime(0.2, now);
+                    bassGain.gain.exponentialRampToValueAtTime(0.01, now + 0.2);
+                    
+                    bass.connect(bassGain);
+                    bassGain.connect(audioContext.destination);
+                    
+                    bass.start(now);
+                    bass.stop(now + 0.2);
+                }
+                
+                // Stompy kick drum on every beat
+                if (noteIndex % 2 === 0) {
+                    const kick = audioContext.createOscillator();
+                    const kickGain = audioContext.createGain();
+                    
+                    kick.type = 'sine';
+                    kick.frequency.setValueAtTime(150, now);
+                    kick.frequency.exponentialRampToValueAtTime(40, now + 0.08);
+                    
+                    kickGain.gain.setValueAtTime(0.3, now);
+                    kickGain.gain.exponentialRampToValueAtTime(0.01, now + 0.1);
+                    
+                    kick.connect(kickGain);
+                    kickGain.connect(audioContext.destination);
+                    
+                    kick.start(now);
+                    kick.stop(now + 0.1);
+                }
+                
+                // Offbeat hi-hat for that dance feel
+                if (noteIndex % 2 === 1) {
+                    const hihat = audioContext.createOscillator();
+                    const hihatGain = audioContext.createGain();
+                    
+                    hihat.type = 'square';
+                    hihat.frequency.setValueAtTime(800, now);
+                    
+                    hihatGain.gain.setValueAtTime(0.05, now);
+                    hihatGain.gain.exponentialRampToValueAtTime(0.01, now + 0.03);
+                    
+                    hihat.connect(hihatGain);
+                    hihatGain.connect(audioContext.destination);
+                    
+                    hihat.start(now);
+                    hihat.stop(now + 0.03);
+                }
+                
+                noteIndex++;
+            }
+            
+            // Fast tempo for energetic dance feel
+            musicInterval = setInterval(playNote, 130);
+        }
+        
+        function stopMusic() {
+            musicPlaying = false;
+            if (musicInterval) {
+                clearInterval(musicInterval);
+                musicInterval = null;
+            }
+        }
+        
+        function playFartSound() {
+            // Try to play the Pixabay audio file first
+            const fartAudio = document.getElementById('fart-audio');
+            if (fartAudio) {
+                fartAudio.currentTime = 0;
+                fartAudio.volume = 1.0;
+                fartAudio.play().then(() => {
+                    // Audio played successfully
+                }).catch(e => {
+                    // Fallback to synthesized fart
+                    playSynthFart();
+                });
+            } else {
+                playSynthFart();
+            }
+        }
+        
+        function playSynthFart() {
+            if (!audioContext) initAudio();
+            
+            const now = audioContext.currentTime;
+            
+            // Classic ripping fart
+            const osc1 = audioContext.createOscillator();
+            const gain1 = audioContext.createGain();
+            osc1.type = 'sawtooth';
+            osc1.frequency.setValueAtTime(120, now);
+            osc1.frequency.exponentialRampToValueAtTime(80, now + 0.15);
+            osc1.frequency.exponentialRampToValueAtTime(50, now + 0.4);
+            osc1.frequency.exponentialRampToValueAtTime(30, now + 0.7);
+            gain1.gain.setValueAtTime(0.6, now);
+            gain1.gain.linearRampToValueAtTime(0.4, now + 0.2);
+            gain1.gain.exponentialRampToValueAtTime(0.01, now + 0.7);
+            osc1.connect(gain1);
+            gain1.connect(audioContext.destination);
+            osc1.start(now);
+            osc1.stop(now + 0.7);
+            
+            // Low rumble
+            const osc2 = audioContext.createOscillator();
+            const gain2 = audioContext.createGain();
+            osc2.type = 'triangle';
+            osc2.frequency.setValueAtTime(60, now);
+            osc2.frequency.exponentialRampToValueAtTime(25, now + 0.6);
+            gain2.gain.setValueAtTime(0.5, now);
+            gain2.gain.exponentialRampToValueAtTime(0.01, now + 0.6);
+            osc2.connect(gain2);
+            gain2.connect(audioContext.destination);
+            osc2.start(now);
+            osc2.stop(now + 0.6);
+            
+            // Noise for texture
+            const bufferSize = audioContext.sampleRate * 0.6;
+            const buffer = audioContext.createBuffer(1, bufferSize, audioContext.sampleRate);
+            const data = buffer.getChannelData(0);
+            for (let i = 0; i < bufferSize; i++) {
+                data[i] = (Math.random() * 2 - 1) * Math.exp(-i / (bufferSize * 0.5));
+            }
+            const noise = audioContext.createBufferSource();
+            noise.buffer = buffer;
+            const noiseGain = audioContext.createGain();
+            noiseGain.gain.setValueAtTime(0.4, now);
+            noiseGain.gain.exponentialRampToValueAtTime(0.01, now + 0.5);
+            const noiseFilter = audioContext.createBiquadFilter();
+            noiseFilter.type = 'lowpass';
+            noiseFilter.frequency.setValueAtTime(500, now);
+            noiseFilter.frequency.exponentialRampToValueAtTime(80, now + 0.5);
+            noise.connect(noiseFilter);
+            noiseFilter.connect(noiseGain);
+            noiseGain.connect(audioContext.destination);
+            noise.start(now);
+        }
+        
+        function playExplosionSound() {
+            if (!audioContext) initAudio();
+            
+            const now = audioContext.currentTime;
+            
+            // Deep boom
+            const boom = audioContext.createOscillator();
+            const boomGain = audioContext.createGain();
+            boom.type = 'sine';
+            boom.frequency.setValueAtTime(80, now);
+            boom.frequency.exponentialRampToValueAtTime(15, now + 1.5);
+            boomGain.gain.setValueAtTime(1, now);
+            boomGain.gain.exponentialRampToValueAtTime(0.01, now + 1.5);
+            boom.connect(boomGain);
+            boomGain.connect(audioContext.destination);
+            boom.start(now);
+            boom.stop(now + 1.5);
+            
+            // Explosion noise
+            const noiseSize = audioContext.sampleRate * 2;
+            const noiseBuffer = audioContext.createBuffer(1, noiseSize, audioContext.sampleRate);
+            const noiseData = noiseBuffer.getChannelData(0);
+            for (let i = 0; i < noiseSize; i++) {
+                noiseData[i] = (Math.random() * 2 - 1) * Math.exp(-i / (noiseSize * 0.5));
+            }
+            const explosionNoise = audioContext.createBufferSource();
+            explosionNoise.buffer = noiseBuffer;
+            const explosionGain = audioContext.createGain();
+            explosionGain.gain.setValueAtTime(0.9, now);
+            explosionGain.gain.exponentialRampToValueAtTime(0.01, now + 2);
+            const explosionFilter = audioContext.createBiquadFilter();
+            explosionFilter.type = 'lowpass';
+            explosionFilter.frequency.setValueAtTime(3000, now);
+            explosionFilter.frequency.exponentialRampToValueAtTime(30, now + 2);
+            explosionNoise.connect(explosionFilter);
+            explosionFilter.connect(explosionGain);
+            explosionGain.connect(audioContext.destination);
+            explosionNoise.start(now);
+        }
+        
+        function updateFootPosition() {
+            // Clamp to play area
+            footY = Math.max(PLAY_AREA_TOP, Math.min(PLAY_AREA_BOTTOM - FOOT_HEIGHT, footY));
+            playerFoot.style.top = footY + 'px';
+        }
+        
+        function spawnFurniture() {
+            const typeKey = furnitureTypes[Math.floor(Math.random() * furnitureTypes.length)];
+            const svgContent = furnitureSVGs[typeKey];
+            
+            const elem = document.createElement('div');
+            elem.className = 'furniture';
+            elem.innerHTML = svgContent;
+            
+            // Size based on furniture type
+            const sizes = {
+                sofa: { w: 150, h: 100 },
+                armchair: { w: 100, h: 110 },
+                bed: { w: 160, h: 110 },
+                wardrobe: { w: 90, h: 130 },
+                chair: { w: 80, h: 120 },
+                desk: { w: 130, h: 100 },
+                tvstand: { w: 120, h: 90 },
+                lamptable: { w: 80, h: 120 },
+                dresser: { w: 110, h: 120 },
+                plant: { w: 70, h: 110 }
+            };
+            
+            const size = sizes[typeKey] || { w: 100, h: 100 };
+            elem.style.width = size.w + 'px';
+            elem.style.height = size.h + 'px';
+            
+            // Random Y position in play area
+            const minY = PLAY_AREA_TOP;
+            const maxY = PLAY_AREA_BOTTOM - size.h;
+            const y = minY + Math.random() * (maxY - minY);
+            
+            // Start just off the right edge
+            elem.style.left = (GAME_WIDTH + 10) + 'px';
+            elem.style.top = y + 'px';
+            elem.style.position = 'absolute';
+            
+            gameContainer.appendChild(elem);
+            
+            // Random speed variation for unpredictability
+            const speedVariation = 0.8 + Math.random() * 0.5;
+            
+            furniture.push({
+                elem: elem,
+                x: GAME_WIDTH + 10,
+                y: y,
+                speed: baseSpeed * speed * speedVariation,
+                width: size.w,
+                height: size.h,
+                fullWidth: size.w
+            });
+        }
+        
+        function update(timestamp) {
+            if (!gameRunning) return;
+            
+            // Handle input - FAST movement
+            const moveSpeed = 14;
+            if (keys['ArrowUp'] || keys['KeyW']) footY -= moveSpeed;
+            if (keys['ArrowDown'] || keys['KeyS']) footY += moveSpeed;
+            
+            updateFootPosition();
+            
+            // Spawn furniture
+            const spawnInterval = baseSpawnInterval / speed;
+            if (timestamp - lastSpawnTime > spawnInterval) {
+                spawnFurniture();
+                lastSpawnTime = timestamp;
+                
+                // Occasionally spawn extra at very high speeds
+                if (speed > 3 && Math.random() < 0.25) {
+                    setTimeout(() => {
+                        if (gameRunning) spawnFurniture();
+                    }, spawnInterval * 0.4);
+                }
+            }
+            
+            // Update furniture
+            const footLeft = 25 + 15; // Add padding for hitbox
+            const footRight = 25 + FOOT_WIDTH - 15;
+            const footTop = footY + 20;
+            const footBottom = footY + FOOT_HEIGHT - 20;
+            
+            for (let i = furniture.length - 1; i >= 0; i--) {
+                const f = furniture[i];
+                f.x -= f.speed;
+                f.elem.style.left = f.x + 'px';
+                
+                // Collision detection - f.x is left edge of furniture
+                const fLeft = f.x;
+                const fRight = f.x + f.width;
+                const fTop = f.y + (f.height * 0.1);
+                const fBottom = f.y + f.height - (f.height * 0.1);
+                
+                if (fRight > footLeft && fLeft < footRight &&
+                    fBottom > footTop && fTop < footBottom) {
+                    gameOver();
+                    return;
+                }
+                
+                // Remove if off screen (passed the left side)
+                if (f.x < -f.fullWidth - 50) {
+                    f.elem.remove();
+                    furniture.splice(i, 1);
+                    score += 10;
+                    scoreDisplay.textContent = score;
+                }
+            }
+            
+            // Increase speed faster
+            speed = 1 + (score / 70); // Faster speed increase
+            speedIndicator.textContent = `SPEED ${speed.toFixed(1)}x`;
+            
+            // Update floor animation speed
+            const floorDuration = Math.max(0.1, 0.5 / speed);
+            floorPattern.style.animationDuration = floorDuration + 's';
+            
+            gameLoopId = requestAnimationFrame(update);
+        }
+        
+        function startGame() {
+            initAudio();
+            updateGameDimensions(); // Recalculate dimensions
+            gameRunning = true;
+            
+            // Start the silly music!
+            setTimeout(playSillyMusic, 500);
+            score = 0;
+            speed = 1;
+            furniture = [];
+            lastSpawnTime = 0;
+            
+            // Clear old furniture
+            document.querySelectorAll('.furniture').forEach(f => f.remove());
+            
+            // Position foot in middle of play area
+            footY = (PLAY_AREA_TOP + PLAY_AREA_BOTTOM - FOOT_HEIGHT) / 2;
+            updateFootPosition();
+            
+            // Reset displays
+            scoreDisplay.textContent = '0';
+            speedIndicator.textContent = 'SPEED 1.0x';
+            
+            // Hide screens
+            startScreen.classList.add('hidden');
+            gameOverScreen.classList.remove('active');
+            gameOverContent.classList.remove('show');
+            
+            // Start game loop
+            gameLoopId = requestAnimationFrame(update);
+        }
+        
+        function gameOver() {
+            gameRunning = false;
+            cancelAnimationFrame(gameLoopId);
+            stopMusic();
+            
+            // Screen shake
+            gameContainer.classList.add('shake');
+            setTimeout(() => gameContainer.classList.remove('shake'), 400);
+            
+            // Hurt animation
+            playerFoot.classList.add('hurt');
+            
+            // Play sounds
+            playFartSound();
+            setTimeout(playExplosionSound, 300);
+            
+            // Show explosion
+            setTimeout(() => {
+                gameOverScreen.classList.add('active');
+                explosionGif.style.backgroundImage = 'none';
+                setTimeout(() => {
+                    explosionGif.style.backgroundImage = "url('https://media.giphy.com/media/XUFPGrX5Zis6Y/giphy.gif')";
+                }, 10);
+                
+                setTimeout(showGameOverContent, 3000);
+            }, 200);
+        }
+        
+        function showGameOverContent() {
+            gameOverContent.classList.add('show');
+            finalScoreDisplay.textContent = `SCORE: ${score}`;
+            playerFoot.classList.remove('hurt');
+        }
+        
+        // Event listeners
+        document.addEventListener('keydown', (e) => {
+            keys[e.code] = true;
+            
+            if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'Space'].includes(e.code)) {
+                e.preventDefault();
+            }
+            
+            if (!gameRunning && (e.code === 'Space' || e.code === 'Enter')) {
+                if (!startScreen.classList.contains('hidden')) {
+                    startGame();
+                } else if (gameOverContent.classList.contains('show')) {
+                    startGame();
+                }
+            }
+        });
+        
+        document.addEventListener('keyup', (e) => {
+            keys[e.code] = false;
+        });
+        
+        // Touch controls
+        let touchStartY = 0;
+        document.addEventListener('touchstart', (e) => {
+            touchStartY = e.touches[0].clientY;
+        });
+        
+        document.addEventListener('touchmove', (e) => {
+            if (!gameRunning) return;
+            e.preventDefault();
+            
+            const touchY = e.touches[0].clientY;
+            const diff = touchY - touchStartY;
+            footY += diff * 0.5;
+            updateFootPosition();
+            touchStartY = touchY;
+        }, { passive: false });
+        
+        // Play fart on all button clicks
+        startBtn.addEventListener('click', () => {
+            playFartSound();
+            startGame();
+        });
+        
+        restartBtn.addEventListener('click', () => {
+            playFartSound();
+            startGame();
+        });
+        
+        explosionGif.addEventListener('click', () => {
+            playFartSound();
+            showGameOverContent();
+        });
+        
+        // Fart button on game over screen - plays the proud fart
+        document.getElementById('fart-btn').addEventListener('click', () => {
+            const proudFart = document.getElementById('proud-fart-audio');
+            if (proudFart) {
+                proudFart.currentTime = 0;
+                proudFart.volume = 1.0;
+                proudFart.play().catch(() => playFartSound());
+            } else {
+                playFartSound();
+            }
+        });
+        
+        // Cancel button also farts
+        document.querySelectorAll('button').forEach(btn => {
+            if (!btn.id || btn.id === 'start-button') { // Buttons without IDs (like Cancel) or Start button
+                btn.addEventListener('click', () => {
+                    playFartSound();
+                });
+            }
+        });
+        
+        // Update clock in status bar and taskbar
+        function updateClock() {
+            const now = new Date();
+            const hours = now.getHours();
+            const minutes = now.getMinutes().toString().padStart(2, '0');
+            const ampm = hours >= 12 ? 'PM' : 'AM';
+            const displayHours = hours % 12 || 12;
+            const timeStr = `${displayHours}:${minutes} ${ampm}`;
+            document.getElementById('clock-display').textContent = timeStr;
+            document.getElementById('taskbar-time').textContent = timeStr;
+        }
+        updateClock();
+        setInterval(updateClock, 1000);
+    </script>
+</body>
+</html>
