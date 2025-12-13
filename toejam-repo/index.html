@@ -353,6 +353,55 @@
             box-shadow: 4px 4px 0 var(--black);
         }
         
+        /* Bull charges display */
+        #bull-charges {
+            position: absolute;
+            top: 18%;
+            left: 50%;
+            transform: translateX(-50%);
+            font-family: 'Barrio', cursive;
+            font-size: 24px;
+            color: var(--black);
+            background: var(--bright-teal);
+            padding: 8px 15px;
+            border: 4px solid var(--black);
+            border-radius: 16px;
+            z-index: 1000;
+            box-shadow: 4px 4px 0 var(--black);
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        #bull-charges .bull-icon {
+            font-size: 28px;
+        }
+        
+        #bull-charges.empty {
+            opacity: 0.5;
+        }
+        
+        /* The charging bull */
+        #charging-bull {
+            position: absolute;
+            left: -150px;
+            font-size: 100px;
+            z-index: 150;
+            filter: drop-shadow(4px 4px 0 var(--black));
+            pointer-events: none;
+            transition: none;
+            transform: scaleX(-1);
+        }
+        
+        #charging-bull.charging {
+            animation: bullShake 0.05s infinite alternate;
+        }
+        
+        @keyframes bullShake {
+            0% { transform: scaleX(-1) translateY(-3px) rotate(-2deg); }
+            100% { transform: scaleX(-1) translateY(3px) rotate(2deg); }
+        }
+        
         /* Warning flash */
         .warning {
             position: absolute;
@@ -623,6 +672,95 @@
             padding: 12px 35px;
         }
         
+        /* High Scores */
+        #high-scores {
+            background: var(--card-white);
+            border: 4px solid var(--black);
+            border-radius: 16px;
+            padding: 15px 25px;
+            box-shadow: 4px 4px 0 var(--black);
+        }
+        
+        #high-scores h3 {
+            font-family: 'Barrio', cursive;
+            font-size: 20px;
+            color: var(--bright-purple);
+            text-align: center;
+            margin-bottom: 10px;
+        }
+        
+        .score-entry {
+            display: flex;
+            justify-content: space-between;
+            font-family: 'Delius', cursive;
+            font-size: 18px;
+            color: var(--black);
+            padding: 5px 0;
+            border-bottom: 2px dashed #ddd;
+        }
+        
+        .score-entry:last-child {
+            border-bottom: none;
+        }
+        
+        .score-entry .rank {
+            color: var(--bright-red);
+            font-weight: bold;
+            width: 30px;
+        }
+        
+        .score-entry .initials {
+            font-weight: bold;
+            width: 80px;
+            text-align: center;
+        }
+        
+        .score-entry .points {
+            width: 80px;
+            text-align: right;
+        }
+        
+        /* Initials Input */
+        #initials-form {
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            gap: 15px;
+            background: var(--bright-teal);
+            border: 4px solid var(--black);
+            border-radius: 16px;
+            padding: 20px 30px;
+            box-shadow: 4px 4px 0 var(--black);
+        }
+        
+        #initials-form.show {
+            display: flex;
+        }
+        
+        #initials-form h3 {
+            font-family: 'Barrio', cursive;
+            font-size: 24px;
+            color: var(--black);
+        }
+        
+        #initials-input {
+            font-family: 'Barrio', cursive;
+            font-size: 32px;
+            width: 180px;
+            text-align: center;
+            text-transform: uppercase;
+            padding: 10px;
+            border: 4px solid var(--black);
+            border-radius: 12px;
+            background: var(--card-white);
+            box-shadow: inset 2px 2px 0 rgba(0,0,0,0.1);
+        }
+        
+        #initials-input:focus {
+            outline: none;
+            box-shadow: 0 0 0 4px var(--bright-yellow);
+        }
+        
         .hidden {
             display: none !important;
         }
@@ -699,6 +837,9 @@
         
         <div id="score">0</div>
         <div id="speed-indicator">SPEED 1.0x</div>
+        <div id="bull-charges"><span class="bull-icon">🐂</span> x <span id="charges-count">3</span></div>
+        
+        <div id="charging-bull">🐂</div>
         
         <div id="player-foot">
             <svg viewBox="0 0 745.11 585.15" xmlns="http://www.w3.org/2000/svg">
@@ -724,6 +865,7 @@
         <p class="instructions">
             Furniture is FLYING at your foot!<br>
             <span>↑ ↓</span> or <span>W S</span> to dodge!<br>
+            <span>SPACE</span> = 🐂 Bull charge! (3x)<br>
             Don't stub your toe... 💀
         </p>
         <button id="start-btn">RUN!</button>
@@ -762,6 +904,34 @@
                 <h2>GAME OVER</h2>
                 <p style="font-family: VT323; font-size: 20px; color: #666;">A furniture has caused an unexpected collision.</p>
                 <div id="final-score">SCORE: 0</div>
+                
+                <!-- Initials input (shows only for new high score) -->
+                <div id="initials-form">
+                    <h3>🏆 NEW HIGH SCORE!</h3>
+                    <input type="text" id="initials-input" maxlength="5" placeholder="ABCDE" autocomplete="off">
+                    <button id="submit-initials-btn">SUBMIT</button>
+                </div>
+                
+                <!-- High Scores Display -->
+                <div id="high-scores">
+                    <h3>🏆 TOP SCORES</h3>
+                    <div class="score-entry">
+                        <span class="rank">1.</span>
+                        <span class="initials" id="hs-initials-1">---</span>
+                        <span class="points" id="hs-score-1">0</span>
+                    </div>
+                    <div class="score-entry">
+                        <span class="rank">2.</span>
+                        <span class="initials" id="hs-initials-2">---</span>
+                        <span class="points" id="hs-score-2">0</span>
+                    </div>
+                    <div class="score-entry">
+                        <span class="rank">3.</span>
+                        <span class="initials" id="hs-initials-3">---</span>
+                        <span class="points" id="hs-score-3">0</span>
+                    </div>
+                </div>
+                
                 <div class="button-row">
                     <button id="restart-btn">Retry</button>
                     <button onclick="location.reload()" style="background: linear-gradient(180deg, #888 0%, #666 100%);">Cancel</button>
@@ -800,6 +970,57 @@
         // Game state
         let gameRunning = false;
         let score = 0;
+        let pendingHighScore = null; // Stores score waiting for initials
+        
+        // High Scores - load from localStorage or use defaults
+        function loadHighScores() {
+            const saved = localStorage.getItem('toeJamHighScores');
+            if (saved) {
+                return JSON.parse(saved);
+            }
+            return [
+                { initials: '-----', score: 0 },
+                { initials: '-----', score: 0 },
+                { initials: '-----', score: 0 }
+            ];
+        }
+        
+        function saveHighScores(scores) {
+            localStorage.setItem('toeJamHighScores', JSON.stringify(scores));
+        }
+        
+        function updateHighScoreDisplay() {
+            const scores = loadHighScores();
+            for (let i = 0; i < 3; i++) {
+                document.getElementById(`hs-initials-${i + 1}`).textContent = scores[i].initials;
+                document.getElementById(`hs-score-${i + 1}`).textContent = scores[i].score;
+            }
+        }
+        
+        function checkHighScore(newScore) {
+            const scores = loadHighScores();
+            // Check if this score makes it into top 3
+            if (newScore > scores[0].score) {
+                return 1; // New #1!
+            } else if (newScore > scores[1].score) {
+                return 2;
+            } else if (newScore > scores[2].score) {
+                return 3;
+            }
+            return 0; // Not a high score
+        }
+        
+        function addHighScore(initials, newScore) {
+            const scores = loadHighScores();
+            // Add new score
+            scores.push({ initials: initials.toUpperCase(), score: newScore });
+            // Sort by score descending
+            scores.sort((a, b) => b.score - a.score);
+            // Keep only top 3
+            scores.length = 3;
+            saveHighScores(scores);
+            updateHighScoreDisplay();
+        }
         let footY;
         let furniture = [];
         let keys = {};
@@ -808,6 +1029,15 @@
         let lastSpawnTime = 0;
         let baseSpawnInterval = 1800; // More furniture - spawn every 1.8 seconds
         let baseSpeed = 6; // Starting slower, will speed up gradually
+        
+        // Bull charge state
+        let bullCharges = 3;
+        let bullCharging = false;
+        let bullX = -150;
+        const bullSpeed = 25;
+        const chargingBull = document.getElementById('charging-bull');
+        const chargesCount = document.getElementById('charges-count');
+        const bullChargesDisplay = document.getElementById('bull-charges');
         
         // DOM elements
         const gameContainer = document.getElementById('game-container');
@@ -1169,6 +1399,222 @@
             explosionNoise.start(now);
         }
         
+        function playHighScoreSound() {
+            if (!audioContext) initAudio();
+            
+            const now = audioContext.currentTime;
+            
+            // Celebratory fanfare - ascending arpeggio
+            const notes = [523, 659, 784, 1047]; // C5, E5, G5, C6 (C major chord ascending)
+            const noteDuration = 0.15;
+            
+            notes.forEach((freq, i) => {
+                const osc = audioContext.createOscillator();
+                const gain = audioContext.createGain();
+                
+                osc.type = 'square';
+                osc.frequency.setValueAtTime(freq, now + i * noteDuration);
+                
+                gain.gain.setValueAtTime(0, now + i * noteDuration);
+                gain.gain.linearRampToValueAtTime(0.2, now + i * noteDuration + 0.02);
+                gain.gain.exponentialRampToValueAtTime(0.01, now + i * noteDuration + noteDuration * 2);
+                
+                osc.connect(gain);
+                gain.connect(audioContext.destination);
+                
+                osc.start(now + i * noteDuration);
+                osc.stop(now + i * noteDuration + noteDuration * 2);
+            });
+            
+            // Final triumphant chord
+            const chordTime = now + notes.length * noteDuration;
+            const chordFreqs = [523, 659, 784, 1047]; // Full C major chord
+            
+            chordFreqs.forEach(freq => {
+                const osc = audioContext.createOscillator();
+                const gain = audioContext.createGain();
+                
+                osc.type = 'triangle';
+                osc.frequency.setValueAtTime(freq, chordTime);
+                
+                gain.gain.setValueAtTime(0.15, chordTime);
+                gain.gain.exponentialRampToValueAtTime(0.01, chordTime + 0.8);
+                
+                osc.connect(gain);
+                gain.connect(audioContext.destination);
+                
+                osc.start(chordTime);
+                osc.stop(chordTime + 0.8);
+            });
+            
+            // Sparkle effect - high pitched twinkles
+            for (let i = 0; i < 5; i++) {
+                const sparkle = audioContext.createOscillator();
+                const sparkleGain = audioContext.createGain();
+                
+                sparkle.type = 'sine';
+                const sparkleTime = chordTime + 0.1 + i * 0.1;
+                sparkle.frequency.setValueAtTime(2000 + Math.random() * 1000, sparkleTime);
+                
+                sparkleGain.gain.setValueAtTime(0.1, sparkleTime);
+                sparkleGain.gain.exponentialRampToValueAtTime(0.01, sparkleTime + 0.15);
+                
+                sparkle.connect(sparkleGain);
+                sparkleGain.connect(audioContext.destination);
+                
+                sparkle.start(sparkleTime);
+                sparkle.stop(sparkleTime + 0.15);
+            }
+        }
+        
+        function playBullChargeSound() {
+            if (!audioContext) initAudio();
+            
+            const now = audioContext.currentTime;
+            
+            // Bull snort/charge sound - low rumble building up
+            const rumble = audioContext.createOscillator();
+            const rumbleGain = audioContext.createGain();
+            rumble.type = 'sawtooth';
+            rumble.frequency.setValueAtTime(60, now);
+            rumble.frequency.linearRampToValueAtTime(120, now + 0.2);
+            rumble.frequency.linearRampToValueAtTime(80, now + 0.5);
+            rumbleGain.gain.setValueAtTime(0.3, now);
+            rumbleGain.gain.linearRampToValueAtTime(0.5, now + 0.2);
+            rumbleGain.gain.exponentialRampToValueAtTime(0.01, now + 0.8);
+            rumble.connect(rumbleGain);
+            rumbleGain.connect(audioContext.destination);
+            rumble.start(now);
+            rumble.stop(now + 0.8);
+            
+            // Stomping hooves
+            for (let i = 0; i < 4; i++) {
+                const stomp = audioContext.createOscillator();
+                const stompGain = audioContext.createGain();
+                const stompTime = now + i * 0.1;
+                
+                stomp.type = 'sine';
+                stomp.frequency.setValueAtTime(100, stompTime);
+                stomp.frequency.exponentialRampToValueAtTime(40, stompTime + 0.05);
+                
+                stompGain.gain.setValueAtTime(0.4, stompTime);
+                stompGain.gain.exponentialRampToValueAtTime(0.01, stompTime + 0.08);
+                
+                stomp.connect(stompGain);
+                stompGain.connect(audioContext.destination);
+                stomp.start(stompTime);
+                stomp.stop(stompTime + 0.1);
+            }
+        }
+        
+        function playFurnitureDestroySound() {
+            if (!audioContext) initAudio();
+            
+            const now = audioContext.currentTime;
+            
+            // Crash/smash sound
+            const crash = audioContext.createOscillator();
+            const crashGain = audioContext.createGain();
+            crash.type = 'square';
+            crash.frequency.setValueAtTime(200, now);
+            crash.frequency.exponentialRampToValueAtTime(50, now + 0.15);
+            crashGain.gain.setValueAtTime(0.3, now);
+            crashGain.gain.exponentialRampToValueAtTime(0.01, now + 0.2);
+            crash.connect(crashGain);
+            crashGain.connect(audioContext.destination);
+            crash.start(now);
+            crash.stop(now + 0.2);
+            
+            // Wood breaking noise
+            const noiseSize = audioContext.sampleRate * 0.2;
+            const noiseBuffer = audioContext.createBuffer(1, noiseSize, audioContext.sampleRate);
+            const noiseData = noiseBuffer.getChannelData(0);
+            for (let i = 0; i < noiseSize; i++) {
+                noiseData[i] = (Math.random() * 2 - 1) * Math.exp(-i / (noiseSize * 0.3));
+            }
+            const noise = audioContext.createBufferSource();
+            noise.buffer = noiseBuffer;
+            const noiseGain = audioContext.createGain();
+            noiseGain.gain.setValueAtTime(0.4, now);
+            noiseGain.gain.exponentialRampToValueAtTime(0.01, now + 0.2);
+            noise.connect(noiseGain);
+            noiseGain.connect(audioContext.destination);
+            noise.start(now);
+        }
+        
+        function triggerBullCharge() {
+            if (bullCharges <= 0 || bullCharging || !gameRunning) return;
+            
+            bullCharges--;
+            chargesCount.textContent = bullCharges;
+            if (bullCharges === 0) {
+                bullChargesDisplay.classList.add('empty');
+            }
+            
+            bullCharging = true;
+            bullX = -150;
+            chargingBull.style.left = bullX + 'px';
+            chargingBull.style.top = (footY + 20) + 'px';
+            chargingBull.classList.add('charging');
+            
+            playBullChargeSound();
+        }
+        
+        function updateBull() {
+            if (!bullCharging) return;
+            
+            bullX += bullSpeed;
+            chargingBull.style.left = bullX + 'px';
+            
+            // Check collision with furniture
+            const bullLeft = bullX + 20;
+            const bullRight = bullX + 100;
+            const bullTop = parseFloat(chargingBull.style.top) || footY;
+            const bullBottom = bullTop + 80;
+            
+            for (let i = furniture.length - 1; i >= 0; i--) {
+                const f = furniture[i];
+                const fLeft = f.x;
+                const fRight = f.x + f.width;
+                const fTop = f.y;
+                const fBottom = f.y + f.height;
+                
+                // Check if bull hits furniture
+                if (bullRight > fLeft && bullLeft < fRight &&
+                    bullBottom > fTop && bullTop < fBottom) {
+                    // Destroy the furniture!
+                    f.elem.style.transform = 'scale(0) rotate(180deg)';
+                    f.elem.style.transition = 'transform 0.2s ease-out';
+                    playFurnitureDestroySound();
+                    
+                    setTimeout(() => {
+                        f.elem.remove();
+                    }, 200);
+                    
+                    furniture.splice(i, 1);
+                    score += 5; // Bonus points for destroying furniture
+                    scoreDisplay.textContent = score;
+                }
+            }
+            
+            // Bull exits screen
+            if (bullX > GAME_WIDTH + 100) {
+                bullCharging = false;
+                chargingBull.classList.remove('charging');
+                chargingBull.style.left = '-150px';
+            }
+        }
+        
+        function resetBullCharges() {
+            bullCharges = 3;
+            bullCharging = false;
+            bullX = -150;
+            chargesCount.textContent = bullCharges;
+            bullChargesDisplay.classList.remove('empty');
+            chargingBull.classList.remove('charging');
+            chargingBull.style.left = '-150px';
+        }
+        
         function updateFootPosition() {
             // Clamp to play area
             footY = Math.max(PLAY_AREA_TOP, Math.min(PLAY_AREA_BOTTOM - FOOT_HEIGHT, footY));
@@ -1332,6 +1778,9 @@
             const floorDuration = Math.max(0.1, 0.5 / speed);
             floorPattern.style.animationDuration = floorDuration + 's';
             
+            // Update bull charge
+            updateBull();
+            
             gameLoopId = requestAnimationFrame(update);
         }
         
@@ -1346,6 +1795,9 @@
             speed = 1;
             furniture = [];
             lastSpawnTime = 0;
+            
+            // Reset bull charges
+            resetBullCharges();
             
             // Clear old furniture
             document.querySelectorAll('.furniture').forEach(f => f.remove());
@@ -1399,6 +1851,35 @@
             gameOverContent.classList.add('show');
             finalScoreDisplay.textContent = `SCORE: ${score}`;
             playerFoot.classList.remove('hurt');
+            
+            // Update high scores display
+            updateHighScoreDisplay();
+            
+            // Check if this score makes it into top 3
+            const rank = checkHighScore(score);
+            const initialsForm = document.getElementById('initials-form');
+            const initialsInput = document.getElementById('initials-input');
+            
+            if (rank > 0 && score > 0) {
+                // Made the leaderboard! Show initials input
+                pendingHighScore = score;
+                initialsForm.classList.add('show');
+                initialsInput.value = '';
+                initialsInput.focus();
+                // Play celebratory sound!
+                playHighScoreSound();
+                // Update the message based on rank
+                const formTitle = initialsForm.querySelector('h3');
+                if (rank === 1) {
+                    formTitle.textContent = '🏆 NEW HIGH SCORE!';
+                } else if (rank === 2) {
+                    formTitle.textContent = '🥈 2ND PLACE!';
+                } else {
+                    formTitle.textContent = '🥉 3RD PLACE!';
+                }
+            } else {
+                initialsForm.classList.remove('show');
+            }
         }
         
         // Event listeners
@@ -1409,7 +1890,13 @@
                 e.preventDefault();
             }
             
-            if (!gameRunning && (e.code === 'Space' || e.code === 'Enter')) {
+            // Trigger bull charge with spacebar during game
+            if (gameRunning && e.code === 'Space') {
+                triggerBullCharge();
+            }
+            
+            // Start game with Enter (not Space, since Space is now for bull)
+            if (!gameRunning && e.code === 'Enter') {
                 if (!startScreen.classList.contains('hidden')) {
                     startGame();
                 } else if (gameOverContent.classList.contains('show')) {
@@ -1450,6 +1937,34 @@
             startGame();
         });
         
+        // Submit initials for high score
+        document.getElementById('submit-initials-btn').addEventListener('click', () => {
+            const initialsInput = document.getElementById('initials-input');
+            const initialsForm = document.getElementById('initials-form');
+            let initials = initialsInput.value.toUpperCase().replace(/[^A-Z]/g, '');
+            
+            // Pad with dashes if less than 1 character, allow up to 5
+            if (initials.length === 0) {
+                initials = '-----';
+            }
+            initials = initials.substring(0, 5);
+            
+            if (pendingHighScore !== null) {
+                addHighScore(initials, pendingHighScore);
+                pendingHighScore = null;
+            }
+            
+            initialsForm.classList.remove('show');
+            playFartSound();
+        });
+        
+        // Allow Enter key to submit initials
+        document.getElementById('initials-input').addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') {
+                document.getElementById('submit-initials-btn').click();
+            }
+        });
+        
         explosionGif.addEventListener('click', () => {
             playFartSound();
             showGameOverContent();
@@ -1475,6 +1990,9 @@
                 });
             }
         });
+        
+        // Initialize high scores display on page load
+        updateHighScoreDisplay();
         
     </script>
 </body>
