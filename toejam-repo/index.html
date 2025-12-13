@@ -46,100 +46,7 @@
             justify-content: center;
             align-items: center;
             padding: 15px;
-            padding-bottom: 45px; /* Space for taskbar */
             position: relative;
-        }
-        
-        /* Win95 Taskbar */
-        #taskbar {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            height: 32px;
-            background: #c0c0c0;
-            border-top: 2px solid #ffffff;
-            display: flex;
-            align-items: center;
-            padding: 2px 4px;
-            z-index: 9999;
-            box-shadow: inset 0 1px 0 #dfdfdf;
-        }
-        
-        #start-button {
-            background: #c0c0c0;
-            border: none;
-            border-top: 2px solid #ffffff;
-            border-left: 2px solid #ffffff;
-            border-right: 2px solid #808080;
-            border-bottom: 2px solid #808080;
-            padding: 2px 6px;
-            font-family: 'Segoe UI', Tahoma, sans-serif;
-            font-size: 12px;
-            font-weight: bold;
-            display: flex;
-            align-items: center;
-            gap: 4px;
-            cursor: pointer;
-            height: 24px;
-        }
-        
-        #start-button:active {
-            border-top: 2px solid #808080;
-            border-left: 2px solid #808080;
-            border-right: 2px solid #ffffff;
-            border-bottom: 2px solid #ffffff;
-        }
-        
-        #start-button img, #start-button span.win-logo {
-            width: 16px;
-            height: 16px;
-        }
-        
-        .win-logo {
-            display: inline-block;
-            background: linear-gradient(135deg, #ff0000 25%, #00ff00 25%, #00ff00 50%, #0000ff 50%, #0000ff 75%, #ffff00 75%);
-            width: 16px;
-            height: 16px;
-        }
-        
-        #taskbar-time {
-            margin-left: auto;
-            background: #c0c0c0;
-            border-top: 2px solid #808080;
-            border-left: 2px solid #808080;
-            border-right: 2px solid #ffffff;
-            border-bottom: 2px solid #ffffff;
-            padding: 2px 8px;
-            font-family: 'Segoe UI', Tahoma, sans-serif;
-            font-size: 11px;
-            height: 22px;
-            display: flex;
-            align-items: center;
-        }
-        
-        .taskbar-divider {
-            width: 2px;
-            height: 24px;
-            margin: 0 4px;
-            border-left: 1px solid #808080;
-            border-right: 1px solid #ffffff;
-        }
-        
-        .taskbar-app {
-            background: #c0c0c0;
-            border-top: 2px solid #808080;
-            border-left: 2px solid #808080;
-            border-right: 2px solid #ffffff;
-            border-bottom: 2px solid #ffffff;
-            padding: 2px 8px;
-            font-family: 'Segoe UI', Tahoma, sans-serif;
-            font-size: 11px;
-            height: 24px;
-            display: flex;
-            align-items: center;
-            gap: 4px;
-            min-width: 120px;
         }
         
         /* BROWSER WINDOW */
@@ -257,29 +164,6 @@
             overflow: hidden;
             background: linear-gradient(180deg, #87CEEB 0%, #98D8C8 100%);
             min-height: 300px;
-        }
-        
-        /* Status Bar */
-        #status-bar {
-            height: 35px;
-            background: var(--dark-purple);
-            border-top: 4px solid var(--black);
-            display: flex;
-            align-items: center;
-            padding: 0 15px;
-            font-size: 16px;
-            color: white;
-            gap: 20px;
-        }
-        
-        .status-section {
-            display: flex;
-            align-items: center;
-            gap: 5px;
-            background: var(--soft-purple);
-            padding: 4px 12px;
-            border-radius: 12px;
-            border: 2px solid var(--black);
         }
         
         /* Desktop Icons */
@@ -671,6 +555,9 @@
             padding: 30px;
             background: var(--bright-yellow);
             border-top: 6px solid var(--black);
+            margin-top: -80px;
+            position: relative;
+            z-index: 10;
         }
         
         #game-over-content.show {
@@ -822,12 +709,6 @@
         </div>
                 </div><!-- end game-container -->
             </div><!-- end browser-content -->
-            
-            <div id="status-bar">
-                <span class="status-section">✅ Done</span>
-                <span class="status-section">🌐 Internet</span>
-                <span class="status-section" id="clock-display">12:00 PM</span>
-            </div>
         </div><!-- end browser-window -->
     </div><!-- end desktop -->
     
@@ -889,19 +770,6 @@
         </div>
     </div>
     
-    <!-- Windows 95 Taskbar -->
-    <div id="taskbar">
-        <button id="start-button">
-            <span class="win-logo"></span>
-            Start
-        </button>
-        <div class="taskbar-divider"></div>
-        <div class="taskbar-app">
-            <span>🦶</span> Toe Jam
-        </div>
-        <div id="taskbar-time">12:00 PM</div>
-    </div>
-
     <script>
         // Game constants - will be set dynamically
         let PLAY_AREA_TOP;
@@ -1329,9 +1197,26 @@
                 plant: { w: 70, h: 110 }
             };
             
-            const size = sizes[typeKey] || { w: 100, h: 100 };
+            const baseSize = sizes[typeKey] || { w: 100, h: 100 };
+            
+            // Random scale variation (0.6x to 1.4x)
+            const scale = 0.6 + Math.random() * 0.8;
+            const size = {
+                w: Math.round(baseSize.w * scale),
+                h: Math.round(baseSize.h * scale)
+            };
+            
             elem.style.width = size.w + 'px';
             elem.style.height = size.h + 'px';
+            
+            // Random rotation (-15 to 15 degrees)
+            const rotation = (Math.random() - 0.5) * 30;
+            
+            // Random horizontal flip (50% chance)
+            const flipX = Math.random() > 0.5 ? -1 : 1;
+            
+            // Apply transforms
+            elem.style.transform = `rotate(${rotation}deg) scaleX(${flipX})`;
             
             // Random Y position in play area
             const minY = PLAY_AREA_TOP;
@@ -1345,17 +1230,33 @@
             
             gameContainer.appendChild(elem);
             
-            // Random speed variation for unpredictability
-            const speedVariation = 0.8 + Math.random() * 0.5;
+            // Random speed variation for unpredictability (wider range)
+            const speedVariation = 0.5 + Math.random() * 1.0;
+            
+            // Random vertical wobble parameters
+            const wobbleAmount = Math.random() > 0.6 ? (10 + Math.random() * 30) : 0;
+            const wobbleSpeed = 0.02 + Math.random() * 0.04;
+            const wobbleOffset = Math.random() * Math.PI * 2;
+            
+            // Random spin while moving
+            const spinSpeed = Math.random() > 0.7 ? (Math.random() - 0.5) * 3 : 0;
             
             furniture.push({
                 elem: elem,
                 x: GAME_WIDTH + 10,
                 y: y,
+                baseY: y,
                 speed: baseSpeed * speed * speedVariation,
                 width: size.w,
                 height: size.h,
-                fullWidth: size.w
+                fullWidth: size.w,
+                rotation: rotation,
+                flipX: flipX,
+                wobbleAmount: wobbleAmount,
+                wobbleSpeed: wobbleSpeed,
+                wobbleOffset: wobbleOffset,
+                spinSpeed: spinSpeed,
+                time: 0
             });
         }
         
@@ -1369,17 +1270,31 @@
             
             updateFootPosition();
             
-            // Spawn furniture
-            const spawnInterval = baseSpawnInterval / speed;
+            // Spawn furniture with randomized timing
+            const baseInterval = baseSpawnInterval / speed;
+            // Add random jitter to spawn timing (0.5x to 1.5x base interval)
+            const spawnInterval = baseInterval * (0.5 + Math.random());
+            
             if (timestamp - lastSpawnTime > spawnInterval) {
                 spawnFurniture();
                 lastSpawnTime = timestamp;
                 
+                // Occasionally spawn a burst of furniture
+                if (Math.random() < 0.15) {
+                    // Spawn 1-2 extra with staggered timing
+                    const extraCount = 1 + Math.floor(Math.random() * 2);
+                    for (let i = 0; i < extraCount; i++) {
+                        setTimeout(() => {
+                            if (gameRunning) spawnFurniture();
+                        }, (i + 1) * (150 + Math.random() * 300));
+                    }
+                }
+                
                 // Occasionally spawn extra at very high speeds
-                if (speed > 3 && Math.random() < 0.25) {
+                if (speed > 2 && Math.random() < 0.3) {
                     setTimeout(() => {
                         if (gameRunning) spawnFurniture();
-                    }, spawnInterval * 0.4);
+                    }, spawnInterval * (0.2 + Math.random() * 0.3));
                 }
             }
             
@@ -1392,6 +1307,20 @@
             for (let i = furniture.length - 1; i >= 0; i--) {
                 const f = furniture[i];
                 f.x -= f.speed;
+                f.time += 1;
+                
+                // Apply wobble effect
+                if (f.wobbleAmount > 0) {
+                    f.y = f.baseY + Math.sin(f.time * f.wobbleSpeed + f.wobbleOffset) * f.wobbleAmount;
+                    f.elem.style.top = f.y + 'px';
+                }
+                
+                // Apply spin effect
+                if (f.spinSpeed !== 0) {
+                    f.rotation += f.spinSpeed;
+                    f.elem.style.transform = `rotate(${f.rotation}deg) scaleX(${f.flipX})`;
+                }
+                
                 f.elem.style.left = f.x + 'px';
                 
                 // Collision detection - f.x is left edge of furniture
@@ -1560,26 +1489,13 @@
         
         // Cancel button also farts
         document.querySelectorAll('button').forEach(btn => {
-            if (!btn.id || btn.id === 'start-button') { // Buttons without IDs (like Cancel) or Start button
+            if (!btn.id) { // Buttons without IDs (like Cancel)
                 btn.addEventListener('click', () => {
                     playFartSound();
                 });
             }
         });
         
-        // Update clock in status bar and taskbar
-        function updateClock() {
-            const now = new Date();
-            const hours = now.getHours();
-            const minutes = now.getMinutes().toString().padStart(2, '0');
-            const ampm = hours >= 12 ? 'PM' : 'AM';
-            const displayHours = hours % 12 || 12;
-            const timeStr = `${displayHours}:${minutes} ${ampm}`;
-            document.getElementById('clock-display').textContent = timeStr;
-            document.getElementById('taskbar-time').textContent = timeStr;
-        }
-        updateClock();
-        setInterval(updateClock, 1000);
     </script>
 </body>
 </html>
