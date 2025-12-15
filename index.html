@@ -229,7 +229,53 @@
         }
         
         #bg-overlay.visible {
-            opacity: 1;
+            opacity: 0.4;
+        }
+        
+        /* Explosion effect */
+        .explosion {
+            position: absolute;
+            pointer-events: none;
+            z-index: 200;
+        }
+        
+        .explosion-particle {
+            position: absolute;
+            border-radius: 50%;
+            animation: explode 0.5s ease-out forwards;
+        }
+        
+        @keyframes explode {
+            0% {
+                transform: translate(0, 0) scale(1);
+                opacity: 1;
+            }
+            100% {
+                transform: translate(var(--tx), var(--ty)) scale(0);
+                opacity: 0;
+            }
+        }
+        
+        .explosion-flash {
+            position: absolute;
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            background: radial-gradient(circle, #FFE135 0%, #FF6A35 40%, transparent 70%);
+            animation: flash 0.3s ease-out forwards;
+            pointer-events: none;
+            z-index: 199;
+        }
+        
+        @keyframes flash {
+            0% {
+                transform: translate(-50%, -50%) scale(0.5);
+                opacity: 1;
+            }
+            100% {
+                transform: translate(-50%, -50%) scale(2);
+                opacity: 0;
+            }
         }
         
         /* Floor */
@@ -676,6 +722,7 @@
             border: 4px solid var(--black);
             border-radius: 16px;
             box-shadow: 4px 4px 0 var(--black);
+            margin-bottom: 20px;
         }
         
         .button-row {
@@ -1655,6 +1702,9 @@
                 // Check if bull hits furniture
                 if (bullRight > fLeft && bullLeft < fRight &&
                     bullBottom > fTop && bullTop < fBottom) {
+                    // Create explosion effect!
+                    createExplosion(f.x + f.width / 2, f.y + f.height / 2);
+                    
                     // Destroy the furniture!
                     f.elem.style.transform = 'scale(0) rotate(180deg)';
                     f.elem.style.transition = 'transform 0.2s ease-out';
@@ -1685,6 +1735,45 @@
             chargesCount.textContent = '∞';
             chargingBull.classList.remove('charging');
             chargingBull.style.left = '-150px';
+        }
+        
+        function createExplosion(x, y) {
+            // Create flash effect
+            const flash = document.createElement('div');
+            flash.className = 'explosion-flash';
+            flash.style.left = x + 'px';
+            flash.style.top = y + 'px';
+            gameContainer.appendChild(flash);
+            
+            // Create particles
+            const colors = ['#FFE135', '#FF6A35', '#FF4757', '#FFA502', '#FFCC00'];
+            const particleCount = 12;
+            
+            for (let i = 0; i < particleCount; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'explosion-particle';
+                
+                const angle = (i / particleCount) * Math.PI * 2;
+                const distance = 60 + Math.random() * 40;
+                const tx = Math.cos(angle) * distance;
+                const ty = Math.sin(angle) * distance;
+                
+                particle.style.left = x + 'px';
+                particle.style.top = y + 'px';
+                particle.style.width = (10 + Math.random() * 15) + 'px';
+                particle.style.height = particle.style.width;
+                particle.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                particle.style.setProperty('--tx', tx + 'px');
+                particle.style.setProperty('--ty', ty + 'px');
+                
+                gameContainer.appendChild(particle);
+                
+                // Remove particle after animation
+                setTimeout(() => particle.remove(), 500);
+            }
+            
+            // Remove flash after animation
+            setTimeout(() => flash.remove(), 300);
         }
         
         function updateFootPosition() {
